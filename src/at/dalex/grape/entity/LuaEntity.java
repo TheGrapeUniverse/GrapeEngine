@@ -25,7 +25,7 @@ public class LuaEntity extends LivingEntity implements LuaInterface {
 
 	private Globals entityGlobals;
 
-	public LuaEntity(int x, int y, int type, int health, String scriptFile) {
+	public LuaEntity(double x, double y, int type, int health, String scriptFile) {
 		super(x, y, type, health);
 		entityGlobals = JsePlatform.standardGlobals();
 

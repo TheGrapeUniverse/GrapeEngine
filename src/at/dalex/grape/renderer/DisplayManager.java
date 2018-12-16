@@ -10,9 +10,12 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.awt.*;
 import java.nio.IntBuffer;
 import java.util.UUID;
 
+import at.dalex.grape.developer.GameInfo;
+import at.dalex.grape.toolbox.Type;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowCloseCallback;
@@ -39,11 +42,17 @@ public class DisplayManager {
 
 	private DisplayInterface handler;
 
-	public DisplayManager(int width, int height, String title, DisplayInterface windowHandler) {
-		windowWidth = width;
-		windowHeight = height;
+	public DisplayManager(String title, DisplayInterface windowHandler) {
 		this.windowTitle = title;
 		this.handler = windowHandler;
+
+		//Parse width and height which is set in GameInfo.txt
+		GameInfo gameInfo = GrapeEngine.getEngine().getGameInfo();
+		if (gameInfo.getValue("window_override").equals("true")) {
+			windowWidth = Type.parseInt(gameInfo.getValue("window_width"));
+			windowHeight = Type.parseInt(gameInfo.getValue("window_height"));
+		}
+
 		timer = new Timer();
 	}
 
@@ -68,6 +77,13 @@ public class DisplayManager {
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+		//Change resolution to display's, when fullscreen is set in GameInfo.txt
+		if (GrapeEngine.getEngine().getGameInfo().getValue("fullscreen").equalsIgnoreCase("true")) {
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			windowWidth = (int) screenSize.getWidth();
+			windowHeight = (int) screenSize.getHeight();
+		}
 
 		//Create the window
 		windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowTitle + " Snapshot " + UUID.randomUUID(), NULL, NULL);
@@ -108,6 +124,10 @@ public class DisplayManager {
 
 		// Make the OpenGL context current
 		glfwMakeContextCurrent(windowHandle);
+
+		//Change vSync if set in GameInfo.txt
+		vSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync")) || vSync;
+
 		// Enable v-sync
 		if (vSync)
 			glfwSwapInterval(1);

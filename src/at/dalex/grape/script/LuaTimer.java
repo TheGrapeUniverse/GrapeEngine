@@ -8,8 +8,14 @@ import at.dalex.grape.renderer.Timer;
 
 class LuaTimer {
 
-	public static class LuaGetDelta extends ZeroArgFunction {
+	public static class LuaGetTime extends ZeroArgFunction {
+		@Override
+		public LuaValue call() {
+			return LuaValue.valueOf(GrapeEngine.getEngine().getDisplayManager().getTimer().getTime());
+		}
+	}
 
+	public static class LuaGetDelta extends ZeroArgFunction {
 		@Override
 		public LuaValue call() {
 			Timer timer = GrapeEngine.getEngine().getDisplayManager().getTimer();
@@ -18,7 +24,6 @@ class LuaTimer {
 	}
 	
 	public static class LuaGetFPS extends ZeroArgFunction {
-
 		@Override
 		public LuaValue call() {
 			Timer timer = GrapeEngine.getEngine().getDisplayManager().getTimer();
@@ -27,7 +32,6 @@ class LuaTimer {
 	}
 	
 	public static class LuaGetUPS extends ZeroArgFunction {
-
 		@Override
 		public LuaValue call() {
 			Timer timer = GrapeEngine.getEngine().getDisplayManager().getTimer();

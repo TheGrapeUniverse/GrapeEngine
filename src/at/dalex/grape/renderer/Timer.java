@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class Timer {
 
 	private double lastLoopTime;
+	private float deltaTime;
 	private float timeCount;
 	private int fps;
 	private int fpsCount;
@@ -20,11 +21,7 @@ public class Timer {
 	}
 
 	public float getDelta() {
-		double time = getTime();
-		float delta = (float) (time - lastLoopTime);
-		lastLoopTime = time;
-		timeCount += delta;
-		return delta;
+		return this.deltaTime;
 	}
 
 	public void updateFPS() {
@@ -36,6 +33,11 @@ public class Timer {
 	}
 
 	public void update() {
+		double time = getTime();
+		deltaTime = (float) (time - lastLoopTime);
+		lastLoopTime = time;
+		timeCount += deltaTime;
+
 		if (timeCount > 1f) {
 			fps = fpsCount;
 			fpsCount = 0;

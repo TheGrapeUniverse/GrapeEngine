@@ -108,18 +108,19 @@ public class LuaManager {
 		LuaValue font = CoerceJavaToLua.coerce(new LuaFont());
 		_G.set("Font", font);
 		LuaTable fontTable = new LuaTable();
-		fontTable.set("__index", fontTable);
 		fontTable.set("createFont", new LuaFont.LuaCreateFont());
+		fontTable.set("__index", fontTable);
 		font.setmetatable(fontTable);
 
 		/* Timer */
 		LuaValue timer = CoerceJavaToLua.coerce(new LuaTimer());
 		_G.set("Timer", timer);
 		LuaTable timerTable = new LuaTable();
-		timerTable.set("__index", timerTable);
+		timerTable.set("getTime", new LuaTimer.LuaGetTime());
 		timerTable.set("getDelta", new LuaTimer.LuaGetDelta());
 		timerTable.set("getFPS", new LuaTimer.LuaGetFPS());
 		timerTable.set("getUPS", new LuaTimer.LuaGetUPS());
+		timerTable.set("__index", timerTable);
 		timer.setmetatable(timerTable);
 	}
 

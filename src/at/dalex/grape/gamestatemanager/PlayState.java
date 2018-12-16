@@ -1,7 +1,10 @@
 package at.dalex.grape.gamestatemanager;
 
+import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.ArrayList;
 
+import at.dalex.grape.input.Input;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
@@ -9,6 +12,7 @@ import at.dalex.grape.entity.Entity;
 import at.dalex.grape.map.Map;
 import at.dalex.grape.renderer.graphicsutil.Graphics;
 import at.dalex.grape.script.LuaManager;
+import org.lwjgl.opengl.GL11;
 
 public class PlayState extends GameState {
 	
@@ -21,7 +25,6 @@ public class PlayState extends GameState {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
-		
 	}
 
 	@Override

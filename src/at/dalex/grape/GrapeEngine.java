@@ -20,7 +20,6 @@ import at.dalex.grape.toolbox.Type;
 public abstract class GrapeEngine implements DisplayInterface {
 
 	private String gameLocation;
-	private int WIDTH, HEIGHT;
 	private DisplayManager displayManager;
 	private GameStateManager gameStateManager;
 	private TilesetManager tilesetManager;
@@ -35,27 +34,21 @@ public abstract class GrapeEngine implements DisplayInterface {
 	
 	private Camera camera;
 	
-	public GrapeEngine(String gameLocation, int width, int height) {
+	public GrapeEngine(String gameLocation) {
 		instance = this;
 
 		OSManager.setLook();
 		gameInfo = new GameInfo(gameLocation);
 		this.gameLocation = gameLocation;
-
-		WIDTH = width;
-		HEIGHT = height;
 	}
 	
 	public void startEngine() {
+		//Parse Window-Data and create DisplayManager
 		String windowTitle = gameInfo.getValue("title");
-		if (gameInfo.getValue("window_override").equals("true")) {
-			WIDTH = Type.parseInt(gameInfo.getValue("window_width"));
-			HEIGHT = Type.parseInt(gameInfo.getValue("window_height"));
-		}
-		boolean useVSync = Boolean.valueOf(gameInfo.getValue("use_vsync"));
-		displayManager = new DisplayManager(WIDTH, HEIGHT, windowTitle, this);
-		displayManager.enableVsync(useVSync);
+		displayManager = new DisplayManager(windowTitle, this);
 		displayManager.createDisplay();
+
+		//Create Managers
 		new Graphics();
 		new DefaultResources();
 		resourceMonitor = new ResourceMonitor();
@@ -63,7 +56,8 @@ public abstract class GrapeEngine implements DisplayInterface {
 		tilesetManager = new TilesetManager();
 		luaManager = new LuaManager();
 		luaManager.setupAPI(luaManager._G);
-		camera = new Camera(WIDTH, HEIGHT);
+		camera = new Camera(DisplayManager.windowWidth, DisplayManager.windowHeight);
+
 		onEnable();
 		
 		displayManager.loop();
@@ -78,7 +72,7 @@ public abstract class GrapeEngine implements DisplayInterface {
 		MemoryManager.drawCallsAmount = 0;
 		MemoryManager.verticesAmount = 0;
 		tilesetManager.updateTileset();
-		gameStateManager.update(0);
+		gameStateManager.update(displayManager.getTimer().getDelta());
 		gameStateManager.draw(camera.getProjectionAndViewMatrix());
 	}
 	

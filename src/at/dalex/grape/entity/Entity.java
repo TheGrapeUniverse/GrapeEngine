@@ -5,15 +5,15 @@ import java.util.UUID;
 
 public abstract class Entity implements ITickable {
 
-	protected int x = 0;
-	protected int y = 0;
+	protected double x = 0;
+	protected double y = 0;
 	private Rectangle bounds;
 	protected UUID entityId;
 	
-	public Entity(int x, int y) {
+	public Entity(double x, double y) {
 		this.x = x;
 		this.y = y;
-		this.bounds = new Rectangle(x, y, 0, 0);
+		this.bounds = new Rectangle((int) x, (int) y, 0, 0);
 		this.entityId = EntityManager.genEntityId();
 	}
 	
@@ -21,19 +21,19 @@ public abstract class Entity implements ITickable {
 		return bounds.intersects(ent.getBounds());
 	}
 	
-	public int getX() {
+	public double getX() {
 		return this.x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 	
-	public int getY() {
+	public double getY() {
 		return this.y;
 	}
 	
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 	
@@ -41,8 +41,8 @@ public abstract class Entity implements ITickable {
 		return this.bounds;
 	}
 	
-	public void setBounds(int x, int y, int width, int height) {
-		bounds.setBounds(x, y, width, height);
+	public void setBounds(double x, double y, int width, int height) {
+		bounds.setBounds((int) x, (int) y, width, height);
 	}
 	
 	public UUID getUniqueId() {

@@ -1,29 +1,29 @@
 local image = nil;
 local instance;
 local animation;
-local scale = 1;
-
-local velocity = 5;
+local walkSpeed = 256;
 
 function init(entityInstance)
 	instance = entityInstance;
 	print("LuaEntity initialized!");
 	print("Loading animation ...");
 	
-	entityInstance:loadAnimation("textures/entity/player/walk.png", 16, 16, 2);
+	entityInstance:loadAnimation("textures/entity/player/walk.png", 16, 16, 32);
 end
 
-function update(delta)
+function update()
+	local delta = Timer.getDelta();
+
 	if (Keyboard.isKeyDown("W")) then
-		instance:setY(instance:getY() - velocity);
+		instance:setY(instance:getY() - (walkSpeed * delta));
 	elseif (Keyboard.isKeyDown("S")) then
-		instance:setY(instance:getY() + velocity);
+		instance:setY(instance:getY() + (walkSpeed * delta));
 	elseif (Keyboard.isKeyDown("A")) then
-		instance:setX(instance:getX() - velocity);
+		instance:setX(instance:getX() - (walkSpeed * delta));
 	elseif (Keyboard.isKeyDown("D")) then
-		instance:setX(instance:getX() + velocity);
+		instance:setX(instance:getX() + (walkSpeed * delta));
 	end
-	
+
 	width = Display.getWidth();
 	height = Display.getHeight();
 	-- Map.setPosition(Display.getWidth() / 2 - instance:getX(), Display.getHeight() / 2 - instance:getY());
@@ -34,6 +34,6 @@ function draw()
 		animation = instance:getAnimation();
 		image = animation:getImage();
 		
-		-- Graphics.drawImage(image, instance:getX() + Map.getX(), instance:getY() + Map.getY(), image:getWidth() * Map.getScale(), image:getHeight() * Map.getScale());
+		Graphics.drawImage(image, instance:getX(), instance:getY(), image:getWidth() * 5, image:getHeight() * 5);
 	end
 end

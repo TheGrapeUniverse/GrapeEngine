@@ -1,6 +1,7 @@
 package at.dalex.grape;
 
 import at.dalex.grape.gamestatemanager.GameState;
+import at.dalex.grape.gamestatemanager.IntroState;
 import at.dalex.grape.gamestatemanager.PlayState;
 
 import java.io.UnsupportedEncodingException;
@@ -13,14 +14,14 @@ public class Launcher extends GrapeEngine {
 	private GameState playState;
 	
 	public Launcher() {
-		super(gameLocation, 720, 480);
+		super(gameLocation);
 		System.out.println(" --- Starting engine ---");
 		startEngine();
 	}
 
 	@Override
 	public void onEnable() {
-		playState = new PlayState();
+		playState = new IntroState();
 		GrapeEngine.getEngine().getGameStateManager().addGameState(playState);
 		GrapeEngine.getEngine().getGameStateManager().setState(playState.getId());
 	}

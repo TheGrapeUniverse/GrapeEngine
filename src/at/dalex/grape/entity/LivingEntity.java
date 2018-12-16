@@ -14,7 +14,7 @@ public abstract class LivingEntity extends Entity {
 	private boolean hasAnimation = false;
 	private Animation animation;
 
-	public LivingEntity(int x, int y, int type, int health) {
+	public LivingEntity(double x, double y, int type, int health) {
 		super(x, y);
 		this.type = type;
 		this.health = health;
