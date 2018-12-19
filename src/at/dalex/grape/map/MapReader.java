@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import at.dalex.grape.developer.GameInfo;
 import org.jdom2.Element;
 
 import at.dalex.grape.graphics.Tileset;
@@ -19,7 +20,7 @@ public class MapReader {
 		Map map = null;
 		XMLReader reader = null;
 		try {
-			reader = new XMLReader(new FileInputStream(new File(pathToTmxFile)));
+			reader = new XMLReader(new FileInputStream(new File(GameInfo.engine_location + "/" + pathToTmxFile)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -55,5 +56,4 @@ public class MapReader {
 		Logger.getLogger("MapReader").info("... [DONE]");
 		return map;
 	}
-
 }

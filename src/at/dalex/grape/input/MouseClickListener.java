@@ -12,14 +12,12 @@ public class MouseClickListener extends GLFWMouseButtonCallback {
 		if (action == GLFW.GLFW_PRESS) {
 			if (!Input.heldKeys.contains(button)) {
 				Input.heldKeys.add(button);
-				System.out.println("added");
 			}
 		}
 
 		else if (action == GLFW.GLFW_RELEASE) {
 			if (Input.heldKeys.contains(button)) {
 				Input.heldKeys.remove(button);
-				System.out.println("Released");
 			}
 		}
 	}

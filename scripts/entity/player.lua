@@ -8,7 +8,7 @@ function init(entityInstance)
 	print("LuaEntity initialized!");
 	print("Loading animation ...");
 	
-	entityInstance:loadAnimation("textures/entity/player/walk.png", 16, 16, 32);
+	entityInstance:loadAnimation("textures/entity/player/walk.png", 16, 16, 8);
 end
 
 function update()
@@ -24,8 +24,6 @@ function update()
 		instance:setX(instance:getX() + (walkSpeed * delta));
 	end
 
-	width = Display.getWidth();
-	height = Display.getHeight();
 	-- Map.setPosition(Display.getWidth() / 2 - instance:getX(), Display.getHeight() / 2 - instance:getY());
 end
 
@@ -34,6 +32,6 @@ function draw()
 		animation = instance:getAnimation();
 		image = animation:getImage();
 		
-		Graphics.drawImage(image, instance:getX(), instance:getY(), image:getWidth() * 5, image:getHeight() * 5);
+		Graphics.drawImage(image, instance:getX(), instance:getY(), image:getWidth() * 3, image:getHeight() * 3);
 	end
 end

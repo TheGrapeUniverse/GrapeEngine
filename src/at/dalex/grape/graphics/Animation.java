@@ -1,76 +1,58 @@
 package at.dalex.grape.graphics;
 
 import java.awt.image.BufferedImage;
-
 import at.dalex.grape.renderer.graphicsutil.Image;
 import at.dalex.grape.renderer.graphicsutil.ImageUtils;
 
 /**
- * Created by Da vid on 14.01.2018.
- */
-
-/**
- * This class takes in an array of images.
- * Calling <code>getImage()</code> gives you the appropriate
+ * This class takes in an image (atlas) an converts it into an animation cycle.
+ *
+ * Calling <code>getImage()</code> will give you the appropriate
  * image in the animation cycle.
  *
  * @author dalex
  */
 public class Animation {
 
-    private Image[] frames;
-    private int currentFrame;
-    private int numFrames;
-
-    private int count;
-    private int delay;
-
-    private int timesPlayed;
-
-    public Animation() {
-        timesPlayed = 0;
-        currentFrame = 0;
-    }
+    private Image[] frames;             //Array of images
+    private double currentFrame = 0;    //Current frame index
+    private int numFrames;              //Count of total frames
+    private int framesPerSecond = 2;    //Amount of frames per second.
 
     public void setFrames(Image[] frames) {
         this.frames = frames;
-        currentFrame = 0;
-        count = 0;
-        timesPlayed = 0;
-        delay = 2;
         numFrames = frames.length;
     }
 
-    public void setDelay(int i) { delay = i; }
-    public void setFrame(int i) { currentFrame = i; }
-    public void setNumFrames(int i) { numFrames = i; }
-
-    public void update() {
-
-        if(delay == -1) return;
-
-        count++;
-
-        if(count == delay) {
-            currentFrame++;
-            count = 0;
-        }
-        if(currentFrame == numFrames) {
-            currentFrame = 0;
-            timesPlayed++;
-        }
+    public void update(double delta) {
+        currentFrame += (framesPerSecond * delta);
+        if ((int) currentFrame >= numFrames) currentFrame = 0;
+    }
+    public int getFramesPerSecond() {
+        return this.framesPerSecond;
     }
 
-    public int getFrame() { return currentFrame; }
-    public int getCount() { return count; }
-    public int getFrameCount() { return frames.length; }
-    public Image getImage() { return frames[currentFrame]; }
-    public boolean hasPlayedOnce() { return timesPlayed > 0; }
-    public boolean hasPlayed(int i) { return timesPlayed == i; }
-    public void setPlayed(int i) { timesPlayed = i; }
+    public void setFramesPerSecond(int framesPerSecond) {
+        this.framesPerSecond = framesPerSecond;
+    }
 
-    public static Animation loadAnimation(BufferedImage animationAtlas, int frameWidth, int frameHeight, int delay) {
+    public int getCurrentFrame() {
+        return (int) currentFrame;
+    }
 
+    public void setCurrentFrame(int index) {
+        currentFrame = index;
+    }
+
+    public int getFrameCount() {
+        return frames.length;
+    }
+
+    public Image getImage() {
+        return frames[(int) currentFrame];
+    }
+
+    public static Animation loadAnimation(BufferedImage animationAtlas, int frameWidth, int frameHeight, int framesPerSecond) {
         Animation animation = new Animation();
         Image[] frames = new Image[animationAtlas.getWidth() / frameWidth];
 
@@ -79,7 +61,7 @@ public class Animation {
         }
 
         animation.setFrames(frames);
-        animation.setDelay(delay);
+        animation.setFramesPerSecond(framesPerSecond);
 
         return animation;
     }

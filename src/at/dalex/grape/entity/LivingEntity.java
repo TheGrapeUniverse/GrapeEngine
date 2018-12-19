@@ -23,7 +23,7 @@ public abstract class LivingEntity extends Entity {
 	@Override
 	public void update(double delta) {
 		if (hasAnimation) {
-			animation.update();
+			animation.update(delta);
 		}
 	}
 
