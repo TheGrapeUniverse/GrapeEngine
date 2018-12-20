@@ -1,51 +1,34 @@
 package at.dalex.grape.entity;
 
-import java.io.File;
-
+import at.dalex.grape.script.LuaScript;
 import org.joml.Matrix4f;
 import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-import org.luaj.vm2.lib.jse.JsePlatform;
 
 import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.gamestatemanager.PlayState;
-import at.dalex.grape.script.LuaInterface;
-import at.dalex.grape.toolbox.Dialog;
-import at.dalex.grape.toolbox.FileUtil;
 
-public class LuaEntity extends LivingEntity implements LuaInterface {
+public class LuaEntity extends LivingEntity {
 
+	private LuaScript script;
 	private LuaValue updateMethod;
 	private LuaValue drawMethod;
 
-	private Globals entityGlobals;
-
 	public LuaEntity(double x, double y, int type, int health, String scriptFile) {
 		super(x, y, type, health);
-		entityGlobals = JsePlatform.standardGlobals();
 
-		scriptFile = "" + scriptFile;
+		//Parse lua-script
+		this.script = new LuaScript(scriptFile);
+		this.updateMethod 	= script.getMethod("update");
+		this.drawMethod 	= script.getMethod("draw");
 
-		if (FileUtil.isFile(new File(scriptFile))) {
-			//Setup LUA for this entity
-			entityGlobals.get("dofile").call(LuaValue.valueOf(scriptFile));
-			GrapeEngine.getEngine().getLuaManager().setupAPI(entityGlobals);
-
-			updateMethod = getMethodFromScript(entityGlobals, "update", scriptFile);
-			drawMethod = getMethodFromScript(entityGlobals, "draw", scriptFile);
-			//Initialize Entity script
-			LuaValue entityInstance = CoerceJavaToLua.coerce(this);
-			getMethodFromScript(entityGlobals, "init", scriptFile).call(entityInstance);
-		}
-		else {
-			Dialog.error("Error", "Unable to find entity script '" + scriptFile + "'!\n"
-					+ "The entity will not function correctly.");
-		}
+		//Initialize Entity-Script
+		LuaValue entityInstance = CoerceJavaToLua.coerce(this);
+		script.getMethod("init").call(entityInstance);
 
 		//Add this entity to the scene
 		PlayState.entities.add(this);
@@ -69,7 +52,6 @@ public class LuaEntity extends LivingEntity implements LuaInterface {
 	/*****************************************************************/
 	/*							LUA-Stuff							 */
 	/*****************************************************************/
-
 
 	static class LuaEntityClass {
 		static class CreateEntity extends VarArgFunction {
@@ -101,17 +83,5 @@ public class LuaEntity extends LivingEntity implements LuaInterface {
 		table.set("__index", table);
 		table.set("create", new LuaEntityClass.CreateEntity());
 		entity.setmetatable(table);
-	}
-	
-	private LuaValue getMethodFromScript(Globals _G, String name, String scriptFile) {
-		LuaValue method = null;
-		try {
-			method = _G.get(name);
-		} catch (LuaError e) {
-			e.printStackTrace();
-			Dialog.error("Error", "Method entry '" + name + "' could not be found\n"
-								+ "in script '" + scriptFile + "'");
-		}
-		return method;
 	}
 }
