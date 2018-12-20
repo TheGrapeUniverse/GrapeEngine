@@ -1,6 +1,7 @@
 package at.dalex.grape.entity;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import at.dalex.grape.graphics.Animation;
 import at.dalex.grape.renderer.graphicsutil.ImageUtils;
@@ -12,7 +13,8 @@ public abstract class LivingEntity extends Entity {
 	protected MoveDirection facingDirection = MoveDirection.DOWN;
 
 	private boolean hasAnimation = false;
-	private Animation animation;
+	private HashMap<String, Animation> animations = new HashMap<>();
+	private String currentAnimation;
 
 	public LivingEntity(double x, double y, int type, int health) {
 		super(x, y);
@@ -23,7 +25,7 @@ public abstract class LivingEntity extends Entity {
 	@Override
 	public void update(double delta) {
 		if (hasAnimation) {
-			animation.update(delta);
+			animations.get(currentAnimation).update(delta);
 		}
 	}
 
@@ -31,21 +33,23 @@ public abstract class LivingEntity extends Entity {
 		return hasAnimation;
 	}
 
-	public void setAnimation(Animation animation) {
-		this.animation = animation;
-		hasAnimation = true;
-	}
-
-	public void loadAnimation(String animationFile, int frameWidth, int frameHeight, int delay) {
-		BufferedImage animationAtlas = ImageUtils.loadBufferedImage(animationFile);
-		if (animationAtlas != null) {
-			animation = Animation.loadAnimation(animationAtlas, frameWidth, frameHeight, delay);
+	public void setAnimation(String animation_key) {
+		if (animations.containsKey(animation_key)) {
+			this.currentAnimation = animation_key;
 			hasAnimation = true;
 		}
 	}
 
-	public Animation getAnimation() {
-		return this.animation;
+	public void loadAnimation(String animation_key, String animationFile, int frameWidth, int frameHeight, int delay) {
+		BufferedImage animationAtlas = ImageUtils.loadBufferedImage(animationFile);
+		if (animationAtlas != null) {
+			animations.put(animation_key, Animation.loadAnimation(animationAtlas, frameWidth, frameHeight, delay));
+			hasAnimation = true;
+		}
+	}
+
+	public Animation getCurrentAnimation() {
+		return this.animations.get(currentAnimation);
 	}
 
 	public void damage(int damage) {

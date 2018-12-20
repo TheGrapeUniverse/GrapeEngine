@@ -5,10 +5,9 @@ local walkSpeed = 256;
 
 function init(entityInstance)
 	instance = entityInstance;
-	print("LuaEntity initialized!");
-	print("Loading animation ...");
-	
-	entityInstance:loadAnimation("textures/entity/player/walk.png", 16, 16, 8);
+
+	entityInstance:loadAnimation("anim_walk", "textures/entity/player/walk.png", 16, 16, 8);
+	entityInstance:setAnimation("anim_walk");
 end
 
 function update()
@@ -29,7 +28,7 @@ end
 
 function draw()
 	if (instance:hasAnimation()) then
-		animation = instance:getAnimation();
+		animation = instance:getCurrentAnimation();
 		image = animation:getImage();
 		
 		Graphics.drawImage(image, instance:getX(), instance:getY(), image:getWidth() * 3, image:getHeight() * 3);
