@@ -32,8 +32,8 @@ import at.dalex.grape.input.Scroll;
 
 public class DisplayManager {
 
-	public static int windowWidth;
-	public static int windowHeight;
+	public static int windowWidth = 720;
+	public static int windowHeight = 480;
 	private String windowTitle = "Grape Engine";
 	private boolean vSync = false;
 	private long windowHandle;

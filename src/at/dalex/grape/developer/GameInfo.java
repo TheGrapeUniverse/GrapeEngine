@@ -27,7 +27,7 @@ public class GameInfo {
 			try {
 				engine_location = new File(".").getCanonicalPath();
 			} catch (IOException e1) {
-				System.err.println("Could not locate the engine in the file tree.");
+				System.err.println("Could not locate engine in the file tree.");
 				e1.printStackTrace();
 				System.exit(-1);
 			}
