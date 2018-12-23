@@ -22,9 +22,8 @@ public class ImageUtils {
 		width = image.getWidth();
 		height = image.getHeight();
 		
-		int[] rawPixels = new int[width * height];
-		rawPixels = image.getRGB(0, 0, width, height, null, 0, width);
-		
+		int[] rawPixels = image.getRGB(0, 0, width, height, null, 0, width);
+
 		ByteBuffer pixelBuffer = BufferUtils.createByteBuffer(width * height * 4);
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
@@ -59,7 +58,6 @@ public class ImageUtils {
 	public static BufferedImage loadBufferedImage(String file) {
 		BufferedImage image = null;
 		try {
-			System.out.println("Image path: " + GameInfo.engine_location + "/" + file);
 			image = ImageIO.read(new File(GameInfo.engine_location + "/" + file));
 		} catch (IOException e) {
 			e.printStackTrace();

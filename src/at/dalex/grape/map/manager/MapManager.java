@@ -48,7 +48,7 @@ public class MapManager {
                     String tilesetPath = (String) mapObject.get("tilesetPath");
 
                     mapInfoArrayList.add(new MapInfo(mapName, mapPath, tileSize, tilesetPath));
-                    System.out.println("  --> Loaded map '" + mapName + "'");
+                    System.out.println("  --> Registered map '" + mapName + "'");
                 }
                 else System.err.println("[MapManager] Map '" + mapName + "' has already been loaded before!");
             }

@@ -1,6 +1,5 @@
 package at.dalex.grape;
 
-
 import at.dalex.grape.map.manager.MapManager;
 import org.lwjgl.opengl.GL11;
 
@@ -66,8 +65,10 @@ public abstract class GrapeEngine implements DisplayInterface {
 		onEnable();
 		
 		displayManager.loop();
+		System.out.println("[INFO] Shutting down ...");
 		onDisable();
 		displayManager.destroy();
+		System.out.println("Goodbye.");
 	}
 	
 	@Override

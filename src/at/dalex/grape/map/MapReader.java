@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.logging.Logger;
-
 import at.dalex.grape.developer.GameInfo;
+import at.dalex.grape.info.Logger;
 import org.jdom2.Element;
 
 import at.dalex.grape.graphics.Tileset;
@@ -16,7 +15,7 @@ import at.dalex.grape.toolbox.Type;
 public class MapReader {
 
 	public static Map parseMap(String pathToTmxFile, Tileset tileset) {
-		Logger.getLogger("MapReader").info("Parsing map '" + pathToTmxFile + "'");
+		Logger.info("[MapReader] Parsing map '" + pathToTmxFile + "'");
 		Map map = null;
 		XMLReader reader = null;
 		try {
@@ -53,7 +52,7 @@ public class MapReader {
 				}
 			}
 		}
-		Logger.getLogger("MapReader").info("... [DONE]");
+		Logger.info("[MapReader] ... [DONE]");
 		return map;
 	}
 }
