@@ -1,6 +1,7 @@
 package at.dalex.grape;
 
 
+import at.dalex.grape.map.manager.MapManager;
 import org.lwjgl.opengl.GL11;
 
 import at.dalex.grape.developer.GameInfo;
@@ -23,6 +24,7 @@ public abstract class GrapeEngine implements DisplayInterface {
 	private DisplayManager displayManager;
 	private GameStateManager gameStateManager;
 	private TilesetManager tilesetManager;
+	private MapManager mapManager;
 	private LuaManager luaManager;
 	private ResourceMonitor resourceMonitor;
 	
@@ -54,9 +56,12 @@ public abstract class GrapeEngine implements DisplayInterface {
 		resourceMonitor = new ResourceMonitor();
 		gameStateManager = new GameStateManager();
 		tilesetManager = new TilesetManager();
+		mapManager = new MapManager();
 		luaManager = new LuaManager();
+
 		luaManager.setupAPI(luaManager._G);
 		camera = new Camera(DisplayManager.windowWidth, DisplayManager.windowHeight);
+		mapManager.upateMapInformations();
 
 		onEnable();
 		
@@ -87,7 +92,11 @@ public abstract class GrapeEngine implements DisplayInterface {
 	public TilesetManager getTilesetManager() {
 		return this.tilesetManager;
 	}
-	
+
+	public MapManager getMapManager() {
+		return this.mapManager;
+	}
+
 	public LuaManager getLuaManager() {
 		return this.luaManager;
 	}

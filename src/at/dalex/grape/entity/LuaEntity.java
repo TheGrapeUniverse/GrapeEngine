@@ -14,21 +14,21 @@ import at.dalex.grape.gamestatemanager.PlayState;
 
 public class LuaEntity extends LivingEntity {
 
-	private LuaScript script;
+	private LuaScript entityScript;
 	private LuaValue updateMethod;
 	private LuaValue drawMethod;
 
 	public LuaEntity(double x, double y, int type, int health, String scriptFile) {
 		super(x, y, type, health);
 
-		//Parse lua-script
-		this.script = new LuaScript(scriptFile);
-		this.updateMethod 	= script.getMethod("update");
-		this.drawMethod 	= script.getMethod("draw");
+		//Parse lua-entityScript
+		this.entityScript = new LuaScript(scriptFile);
+		this.updateMethod 	= entityScript.getMethod("update");
+		this.drawMethod 	= entityScript.getMethod("draw");
 
 		//Initialize Entity-Script
 		LuaValue entityInstance = CoerceJavaToLua.coerce(this);
-		script.getMethod("init").call(entityInstance);
+		entityScript.getMethod("init").call(entityInstance);
 
 		//Add this entity to the scene
 		PlayState.entities.add(this);

@@ -33,7 +33,10 @@ class LuaMap {
 
 		@Override
 		public LuaValue call() {
-			
+			if (PlayState.current_map == null)
+				Dialog.error("Lua-Error", 	"Unable to get the scale of the current map,\n" +
+											"no map has been loaded yet!");
+
 			return LuaValue.valueOf(PlayState.current_map.getScale());
 		}
 	}
@@ -43,6 +46,11 @@ class LuaMap {
 		@Override
 		public LuaValue call(LuaValue arg0) {
 			float scale = (float) arg0.checkdouble();
+
+			if (PlayState.current_map == null)
+				Dialog.error("Lua-Error", 	"Unable to set the scale of the current map,\n" +
+											"no map has been loaded yet!");
+
 			PlayState.current_map.setScale(scale);
 			return NIL;
 		}
@@ -56,6 +64,10 @@ class LuaMap {
 			int y = arg1.checkint();
 			
 			PlayState.current_map.setPosition(x, y);
+
+			if (PlayState.current_map == null)
+				Dialog.error("Lua-Error", 	"Unable to get the position of the current map,\n" +
+											"no map has been loaded yet!");
 			
 			return NIL;
 		}
@@ -65,6 +77,10 @@ class LuaMap {
 
 		@Override
 		public LuaValue call() {
+			if (PlayState.current_map == null)
+				Dialog.error("Lua-Error", 	"Unable to get x-position of the current map,\n" +
+											"no map has been loaded yet!");
+
 			return LuaValue.valueOf(PlayState.current_map.getX());
 		}
 	}
@@ -73,6 +89,10 @@ class LuaMap {
 
 		@Override
 		public LuaValue call() {
+			if (PlayState.current_map == null)
+				Dialog.error("Lua-Error",	"Unable to get the y-position of the current map,\n" +
+											"no map has been loaded yet!");
+
 			return LuaValue.valueOf(PlayState.current_map.getY());
 		}
 	}
