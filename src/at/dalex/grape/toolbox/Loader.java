@@ -6,54 +6,54 @@ import at.dalex.grape.renderer.mesh.RawModel;
 public class Loader {
 
 	private VertexArrayObject vao;
-	
+
 	public RawModel loadToVAO(float[] vertices, int[] indices) {
 		vao = new VertexArrayObject();
-		
+
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
 		vao.storeDataInAttributeList(0, 3, vertices);
 		vao.unbindVAO();
-		
+
 		return new RawModel(vao.getID(), indices.length);
 	}
-	
+
 	public RawModel loadToVAO(float[] vertices, float[] textureCoordinates, float[] normals, int[] indices) {
 		vao = new VertexArrayObject();
-		
+
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
 		vao.storeDataInAttributeList(0, 3, vertices);
 		vao.storeDataInAttributeList(1, 2, textureCoordinates);
 		vao.storeDataInAttributeList(2, 3, normals);
 		vao.unbindVAO();
-		
+
 		return new RawModel(vao.getID(), indices.length);
 	}
-	
+
 	public RawModel loadToVAO(float[] vertices, float[] textureCoordinates, int[] indices) {
 		vao = new VertexArrayObject();
-		
+
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
 		vao.storeDataInAttributeList(0, 3, vertices);
 		vao.storeDataInAttributeList(1, 2, textureCoordinates);
 		vao.unbindVAO();
-		
+
 		return new RawModel(vao.getID(), indices.length);
 	}
-	
+
 	public RawModel loadToVAO(float[] vertices, int coordinateSize) {
 		vao = new VertexArrayObject();
-		
+
 		vao.bindVAO();
 		vao.storeDataInAttributeList(0, coordinateSize, vertices);
 		vao.unbindVAO();
-		
+
 		//Divide by n because we have n coordinates per vertex
 		return new RawModel(vao.getID(), vertices.length / coordinateSize);
 	}
-	
+
 	public RawModel fromRectangle(int x, int y, int w, int h) {
 		int sh = 0;
 		float[] vertices = new float[] {
@@ -73,10 +73,10 @@ public class Loader {
 		vao.bindIndicesBuffer(indices);
 		vao.storeDataInAttributeList(0, 3, vertices);
 		vao.unbindVAO();
-		
+
 		return new RawModel(vao.getID(), indices.length);
 	}
-	
+
 	public RawModel fromRectangle(int x, int y, int w, int h, float[] textureCoordinates) {
 		float[] vertices = new float[] {
 				x, y, 0.0f,
@@ -96,7 +96,7 @@ public class Loader {
 		vao.storeDataInAttributeList(0, 3, vertices);
 		vao.storeDataInAttributeList(1, 2, textureCoordinates);
 		vao.unbindVAO();
-		
+
 		return new RawModel(vao.getID(), indices.length);
 	}
 }

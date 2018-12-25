@@ -122,6 +122,15 @@ public class LuaManager {
 		timerTable.set("getUPS", new LuaTimer.LuaGetUPS());
 		timerTable.set("__index", timerTable);
 		timer.setmetatable(timerTable);
+
+		/* Logger */
+		LuaValue logger = CoerceJavaToLua.coerce(new LuaLogger());
+		_G.set("Logger", logger);
+		LuaTable loggerTable = new LuaTable();
+		loggerTable.set("info", new LuaLogger.LuaInfo());
+		loggerTable.set("error", new LuaLogger.LuaError());
+		loggerTable.set("__index", loggerTable);
+		logger.setmetatable(loggerTable);
 	}
 
 	public static boolean methodExists(Globals globals, String name) {
