@@ -39,12 +39,12 @@ function update()
 	end
 
 	-- Update Camera Position
-	local lerp = 0.1;
-	local position = Camera.getPosition();
-	local xPos = position[0] + (instance:getX() - position[0]) * lerp * delta;
-	local yPos = position[1] + (instance:gety() - position[1]) * lerp * delta;
+	-- local lerp = 0.1;
+	-- local position = Camera.getPosition();
+	-- local xPos = position[0] + (instance:getX() - position[0]) * lerp * delta;
+	-- local yPos = position[1] + (instance:gety() - position[1]) * lerp * delta;
 
-	Camera.setPosition(xPos, yPos);
+	-- Camera.setPosition(xPos, yPos);
 
 	-- Map.setPosition(Display.getWidth() / 3 / 2 - instance:getX(), Display.getHeight() / 3 / 2 - instance:getY());
 end

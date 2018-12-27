@@ -1,21 +1,9 @@
 package at.dalex.grape.renderer.shader;
 
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glBindAttribLocation;
-import static org.lwjgl.opengl.GL20.glCompileShader;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glCreateShader;
-import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glDeleteShader;
-import static org.lwjgl.opengl.GL20.glDetachShader;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glShaderSource;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL20.glValidateProgram;
-
 import at.dalex.grape.renderer.shader.UniformUtil.UniformLoader;
+import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL20.*;
 
 /**
  * This class was written by dalex on 14.10.2017.
@@ -69,6 +57,7 @@ public abstract class ShaderProgram {
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderCode);
         glCompileShader(shaderID);
+        System.out.println("Shader log: " + glGetShaderInfoLog(shaderID));
         return shaderID;
     }
 

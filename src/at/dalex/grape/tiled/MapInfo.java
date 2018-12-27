@@ -3,7 +3,6 @@ package at.dalex.grape.tiled;
 import java.util.ArrayList;
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 
 /**
  * Created by Da vid on 20.10.2017.

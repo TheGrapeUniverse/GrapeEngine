@@ -1,6 +1,7 @@
-#version 400 core
+#version 330
+
 uniform mat4 projectionMatrix;
-attribute vec3 vertices;
+layout (location = 0) in vec3 vertices;
 
 void main() {
 

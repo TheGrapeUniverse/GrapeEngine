@@ -52,7 +52,7 @@ public abstract class GrapeEngine implements DisplayInterface {
 		//Create Managers
 		new Graphics();
 		new DefaultResources();
-		resourceMonitor = new ResourceMonitor();
+		//resourceMonitor = new ResourceMonitor();
 		gameStateManager = new GameStateManager();
 		tilesetManager = new TilesetManager();
 		mapManager = new MapManager();
@@ -74,9 +74,9 @@ public abstract class GrapeEngine implements DisplayInterface {
 	@Override
 	public void updateEngine(double delta) {
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
-		resourceMonitor.update();
-		MemoryManager.drawCallsAmount = 0;
-		MemoryManager.verticesAmount = 0;
+		//resourceMonitor.update();
+		//MemoryManager.drawCallsAmount = 0;
+		//MemoryManager.verticesAmount = 0;
 		tilesetManager.updateTileset();
 		gameStateManager.update(displayManager.getTimer().getDelta());
 		gameStateManager.draw(camera.getProjectionAndViewMatrix());

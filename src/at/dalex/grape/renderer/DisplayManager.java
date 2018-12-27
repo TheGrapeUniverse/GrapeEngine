@@ -3,10 +3,7 @@ package at.dalex.grape.renderer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -53,6 +50,16 @@ public class DisplayManager {
 			windowHeight = Type.parseInt(gameInfo.getValue("window_height"));
 		}
 
+		//Change resolution to display's, when fullscreen is set in GameInfo.txt
+		if (GrapeEngine.getEngine().getGameInfo().getValue("fullscreen").equalsIgnoreCase("true")) {
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			windowWidth = (int) screenSize.getWidth();
+			windowHeight = (int) screenSize.getHeight();
+		}
+
+		//Change vSync if set in GameInfo.txt
+		vSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync")) || vSync;
+
 		timer = new Timer();
 	}
 
@@ -72,31 +79,31 @@ public class DisplayManager {
 		if (!glfwInit()) {
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
-		
-		//Configure GLFW
-		glfwDefaultWindowHints();
-		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-		//Change resolution to display's, when fullscreen is set in GameInfo.txt
-		if (GrapeEngine.getEngine().getGameInfo().getValue("fullscreen").equalsIgnoreCase("true")) {
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			windowWidth = (int) screenSize.getWidth();
-			windowHeight = (int) screenSize.getHeight();
-		}
+		//GL Version selection
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
 		//Create the window
-		windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowTitle + " Snapshot " + UUID.randomUUID(), NULL, NULL);
+		windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowTitle + " Snapshot", NULL, NULL);
 		if (windowHandle == NULL) {
-			throw new RuntimeException("Failed to create the GLFW window");
+			throw new RuntimeException("Failed to create the GLFW window.");
 		}
 
-		//Setup a key callback. It will be called every time a key is pressed, repeated or released.
+		// Make the OpenGL context current
+		glfwMakeContextCurrent(windowHandle);
+
+		//Initialize OpenGL functions
+		GL.createCapabilities();
+
+		//Setup callbacks
 		glfwSetKeyCallback(windowHandle, new KeyListener());
-		//Setup a cursor callback.
 		glfwSetCursorPosCallback(windowHandle, new MouseListener());
 		glfwSetMouseButtonCallback(windowHandle, new MouseClickListener());
 		glfwSetScrollCallback(windowHandle, new Scroll());
+
 		glfwSetWindowCloseCallback(windowHandle, new GLFWWindowCloseCallback() {
 			@Override
 			public void invoke(long arg0) {
@@ -122,12 +129,6 @@ public class DisplayManager {
 			);
 		}
 
-		// Make the OpenGL context current
-		glfwMakeContextCurrent(windowHandle);
-
-		//Change vSync if set in GameInfo.txt
-		vSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync")) || vSync;
-
 		// Enable v-sync
 		if (vSync)
 			glfwSwapInterval(1);
@@ -135,22 +136,12 @@ public class DisplayManager {
 
 		// Make the window visible
 		glfwShowWindow(windowHandle);
-		
-		initializeWindow();
-	}
-
-	private void initializeWindow() {
-		GL.createCapabilities();
 
 		// Set the clear color
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-		setupOpenGL();
+		glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
 	}
-	
+
 	public void loop() {
-		// Run the rendering loop until the user has attempted to close
-		// the window or has pressed the ESCAPE key.
 		while (!glfwWindowShouldClose(windowHandle)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -159,7 +150,8 @@ public class DisplayManager {
 			timer.updateFPS();
 			handler.updateEngine(timer.getDelta());
 
-			glfwSwapBuffers(windowHandle); // swap the color buffers
+			// swap the color buffers
+			glfwSwapBuffers(windowHandle);
 
 			// Poll for window events. The key callback above will only be
 			// invoked during this call.
@@ -167,19 +159,10 @@ public class DisplayManager {
 		}
 	}
 
-	private void setupOpenGL() {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glViewport(0, 0, windowWidth, windowHeight);
-		GL11.glOrtho(0, windowWidth, windowHeight, 0, -1, 0);
-	}
-	
 	public void enableVsync(boolean vsync) {
 		this.vSync = vsync;
 	}
-	
-	
+
 	//Package private method
 	long getWindowHandle() {
 		return this.windowHandle;

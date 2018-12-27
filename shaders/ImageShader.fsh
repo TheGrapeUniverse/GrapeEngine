@@ -1,7 +1,8 @@
-#version 400
+#version 330
 
 in vec2 pass_textureCoordinates;
 uniform sampler2D textureSampler;
+out vec4 fragColor;
 
 // Just some random shit to make funny waves lolxd
 vec2 sineWave(vec2 pos) {
@@ -19,5 +20,5 @@ void main() {
 	//vec2 uv = sineWave(pos);
 	//vec4 tColor = texture2D(textureSampler, uv);
 	
-	gl_FragColor = texture2D(textureSampler, pass_textureCoordinates);
+	fragColor = texture(textureSampler, pass_textureCoordinates);
 }

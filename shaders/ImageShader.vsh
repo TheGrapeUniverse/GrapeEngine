@@ -1,7 +1,9 @@
-#version 400 core
+#version 330
 
 uniform mat4 projectionMatrix;
-attribute vec3 position;
+
+layout (location = 0) in vec3 position;
+
 in vec2 textureCoordinates;
 out vec2 pass_textureCoordinates;
 
