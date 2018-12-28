@@ -2,24 +2,24 @@ package at.dalex.grape.graphics.graphicsutil;
 
 import java.awt.Color;
 
+import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-import at.dalex.grape.graphics.mesh.RawModel;
 import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.ImageShader;
 import at.dalex.grape.graphics.shader.SolidColorShader;
-import at.dalex.grape.toolbox.Loader;
+import at.dalex.grape.toolbox.ModelUtil;
 import at.dalex.grape.toolbox.Toolbox;
 
 public class Graphics {
 
 	static {
-		loader = new Loader();
+		modelUtil = new ModelUtil();
 	}
 	
-	private static Loader loader;
+	private static ModelUtil modelUtil;
 	private static SolidColorShader solidColorShader;
 	private static ImageShader imageShader;
 	
@@ -38,15 +38,15 @@ public class Graphics {
 	};
 	
 	private static int[] rectangleBaseIndices = new int[] {
-		0, 1, 2, 0, 2, 3	
+		0, 1, 2, 0, 2, 3
 	};
 	
-	private static RawModel defaultRectangleModel;
+	private static Model defaultRectangleModel;
 
 	public Graphics() {
 		solidColorShader = new SolidColorShader();
 		imageShader = new ImageShader();
-		defaultRectangleModel = loader.loadToVAO(rectangleBaseVertices, rectangleUvs, rectangleBaseIndices);
+		defaultRectangleModel = new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
 	}
 	
 	/**
@@ -112,9 +112,9 @@ public class Graphics {
 	}	
 	
 	/**
-	 * Get the {@link Loader} instance, which is used to store data in VBOs or in attribute lists.
+	 * Get the {@link ModelUtil} instance, which is used to store data in VBOs or in attribute lists.
 	 */
-	public static Loader getLoader() {
-		return loader;
+	public static ModelUtil getLoader() {
+		return modelUtil;
 	}
 }

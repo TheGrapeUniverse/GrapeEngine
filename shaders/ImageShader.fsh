@@ -15,7 +15,6 @@ vec2 sineWave(vec2 pos) {
 }
 
 void main() {
-	
 	//vec2 pos = pass_textureCoordinates;
 	//vec2 uv = sineWave(pos);
 	//vec4 tColor = texture2D(textureSampler, uv);

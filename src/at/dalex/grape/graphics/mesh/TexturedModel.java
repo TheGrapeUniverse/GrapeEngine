@@ -1,43 +1,64 @@
 package at.dalex.grape.graphics.mesh;
 
-import at.dalex.grape.graphics.graphicsutil.Graphics;
+import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
+import at.dalex.grape.toolbox.Dialog;
+import org.joml.Vector2f;
 
 public class TexturedModel {
 
-	private RawModel rawModel;
+	private Model baseModel;
+
 	private int textureId;
+	private TextureAtlas textureAtlas;
+	private Vector2f atlas_texture_offset;
+	private int active_atlas_texture;
+	private boolean use_textureAtlas = false;
 
-	private int numberOfRows = 1;
-
-	private float[] uvs;
-
-	public TexturedModel(RawModel rawModel, int textureId) {
-		this.rawModel = rawModel;
+	public TexturedModel(Model baseModel, int textureId) {
+		this.baseModel = baseModel;
 		this.textureId = textureId;
 	}
 
-	public RawModel getRawModel() {
-		return this.rawModel;
+	public TextureAtlas getTextureAtlas() {
+		return this.textureAtlas;
+	}
+
+	public void setTextureAtlas(TextureAtlas atlas) {
+		this.textureAtlas = atlas;
+	}
+
+	public boolean isUsingTextureAtlas() {
+		return this.use_textureAtlas;
+	}
+
+	public void useTextureAtlas(boolean use) {
+		this.use_textureAtlas = use;
+	}
+
+	public int getActiveAtlasTextureIndex() {
+		return this.active_atlas_texture;
+	}
+
+	public void setActiveAtlasTextureIndex(int textureIndex) {
+		this.active_atlas_texture = textureIndex;
+		//Recalculate uv-offset
+		if (isUsingTextureAtlas()) {
+			int cellX = active_atlas_texture % textureAtlas.getNumberOfRows();
+			int cellY = active_atlas_texture / textureAtlas.getNumberOfRows();
+			float normalizedCellSize = 1.0f / textureAtlas.getNumberOfRows();
+			atlas_texture_offset = new Vector2f(cellX * normalizedCellSize, cellY * normalizedCellSize);
+		} else Dialog.error("Engine Error", "Unable to set Atlas UV-Offset while no Atlas is set!");
+	}
+
+	public Vector2f getAtlasTextureUVOffset() {
+		return atlas_texture_offset;
+	}
+
+	public Model getBaseModel() {
+		return this.baseModel;
 	}
 
 	public int getTextureId() {
 		return this.textureId;
-	}
-
-	public int getNumberOfRows() {
-		return this.numberOfRows;
-	}
-
-	public void setNumberOfRows(int numberOfRows) {
-		this.numberOfRows = numberOfRows;
-	}
-
-	public float[] getUVCoordinates() {
-		return this.uvs;
-	}
-	
-	public static TexturedModel create(float[] vertices, int[] indices, float[] textureCoordinates, int textureId) {
-		RawModel rawModel = Graphics.getLoader().loadToVAO(vertices, textureCoordinates, indices);
-		return new TexturedModel(rawModel, textureId);
 	}
 }

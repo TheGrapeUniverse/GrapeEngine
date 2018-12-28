@@ -6,12 +6,12 @@ import static org.lwjgl.opengl.GL20.glUniform4f;
 
 import java.awt.Color;
 
+import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-import at.dalex.grape.graphics.mesh.RawModel;
 import at.dalex.grape.resource.FileContentReader;
 import at.dalex.grape.toolbox.MemoryManager;
 
@@ -38,11 +38,11 @@ public class SolidColorShader extends ShaderProgram {
 
 	}
 
-	public void drawMesh(RawModel model, Matrix4f projectionAndViewMatrix, Color color) {
+	public void drawMesh(Model model, Matrix4f projectionAndViewMatrix, Color color) {
 		start();
 		glUniform4f(colorLocation, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
-		GL30.glBindVertexArray(model.getVaoID());
+		GL30.glBindVertexArray(model.getVao().getID());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(positionHandle);
 		

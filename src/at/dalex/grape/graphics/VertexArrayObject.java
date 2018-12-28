@@ -25,8 +25,10 @@ public class VertexArrayObject {
 	 * Store an array of float values in a new attribute slot of this {@link VertexArrayObject}.
 	 * @param attributeNumber Attribute slot to store data in
 	 * @param data The data you want to store
+	 *
+	 * @return The ID of the generated VertexBufferObject.
 	 */
-	public void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, boolean dynamic) {
+	public int storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, boolean dynamic) {
 		bindVAO();
 		
 		int vboID = GL15.glGenBuffers();
@@ -42,6 +44,8 @@ public class VertexArrayObject {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		
 		unbindVAO();
+
+		return vboID;
 	}
 	
 	/**
