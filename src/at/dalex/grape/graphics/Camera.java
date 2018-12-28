@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer;
+package at.dalex.grape.graphics;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

@@ -1,7 +1,7 @@
 package at.dalex.grape.map;
 
 import at.dalex.grape.graphics.Tileset;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 
 public class MapGenerator {
 

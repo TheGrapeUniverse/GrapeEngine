@@ -1,7 +1,6 @@
-package at.dalex.grape.renderer.shader;
+package at.dalex.grape.graphics.shader;
 
-import at.dalex.grape.renderer.shader.UniformUtil.UniformLoader;
-import org.lwjgl.opengl.GL11;
+import at.dalex.grape.graphics.shader.UniformUtil.UniformLoader;
 
 import static org.lwjgl.opengl.GL20.*;
 

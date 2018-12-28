@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer.shader;
+package at.dalex.grape.graphics.shader;
 
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -11,7 +11,7 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
-import at.dalex.grape.renderer.mesh.RawModel;
+import at.dalex.grape.graphics.mesh.RawModel;
 import at.dalex.grape.resource.FileContentReader;
 import at.dalex.grape.toolbox.MemoryManager;
 

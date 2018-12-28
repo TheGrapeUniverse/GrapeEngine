@@ -7,7 +7,7 @@ import org.joml.Matrix4f;
 import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.map.Map;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.script.LuaManager;
 
 public class PlayState extends GameState {

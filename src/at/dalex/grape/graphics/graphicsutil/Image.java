@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer.graphicsutil;
+package at.dalex.grape.graphics.graphicsutil;
 
 import org.lwjgl.opengl.GL11;
 

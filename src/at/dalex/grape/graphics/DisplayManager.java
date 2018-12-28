@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer;
+package at.dalex.grape.graphics;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -9,7 +9,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.awt.*;
 import java.nio.IntBuffer;
-import java.util.UUID;
 
 import at.dalex.grape.developer.GameInfo;
 import at.dalex.grape.toolbox.Type;
@@ -17,7 +16,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowCloseCallback;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 
 import at.dalex.grape.GrapeEngine;
@@ -29,17 +27,24 @@ import at.dalex.grape.input.Scroll;
 
 public class DisplayManager {
 
+	/* Static fields, so we can easily access the dimensions of the display later */
 	public static int windowWidth = 720;
 	public static int windowHeight = 480;
+
 	private String windowTitle = "Grape Engine";
-	private boolean vSync = false;
+	private boolean useVerticalSync;
+
+	/* GLFW Window Handle */
 	private long windowHandle;
-	
+
+	private DisplayCallback callback_reference;
+
+	/* Timer instance, which is used to calculate delta time or count fps */
 	private Timer timer;
 
-	private DisplayInterface handler;
+	private DisplayCallback handler;
 
-	public DisplayManager(String title, DisplayInterface windowHandler) {
+	public DisplayManager(String title, DisplayCallback windowHandler) {
 		this.windowTitle = title;
 		this.handler = windowHandler;
 
@@ -57,22 +62,12 @@ public class DisplayManager {
 			windowHeight = (int) screenSize.getHeight();
 		}
 
-		//Change vSync if set in GameInfo.txt
-		vSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync")) || vSync;
+		//Change VSync if set in GameInfo.txt
+		useVerticalSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync"));
 
 		timer = new Timer();
 	}
 
-	public void destroy() {
-		// Free the window callbacks and destroy the window
-		glfwFreeCallbacks(windowHandle);
-		glfwDestroyWindow(windowHandle);
-
-		// Terminate GLFW and free the error callback
-		glfwTerminate();
-		glfwSetErrorCallback(null).free();
-	}
-	
 	public void createDisplay() {
 		GLFWErrorCallback.createPrint(System.err).set();
 
@@ -130,7 +125,7 @@ public class DisplayManager {
 		}
 
 		// Enable v-sync
-		if (vSync)
+		if (useVerticalSync)
 			glfwSwapInterval(1);
 		else glfwSwapInterval(0);
 
@@ -138,7 +133,7 @@ public class DisplayManager {
 		glfwShowWindow(windowHandle);
 
 		// Set the clear color
-		glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	public void loop() {
@@ -159,13 +154,20 @@ public class DisplayManager {
 		}
 	}
 
-	public void enableVsync(boolean vsync) {
-		this.vSync = vsync;
+	/**
+	 * Destroys the window and frees callbacks
+	 */
+	public void destroy() {
+		//Free window callbacks and destroy the window
+		glfwFreeCallbacks(windowHandle);
+		glfwDestroyWindow(windowHandle);
+
+		glfwTerminate();
+		glfwSetErrorCallback(null).free();
 	}
 
-	//Package private method
-	long getWindowHandle() {
-		return this.windowHandle;
+	public void enableVsync(boolean useVerticalSync) {
+		this.useVerticalSync = useVerticalSync;
 	}
 
 	public Timer getTimer() {

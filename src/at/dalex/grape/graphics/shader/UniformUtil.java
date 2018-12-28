@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer.shader;
+package at.dalex.grape.graphics.shader;
 
 import java.nio.FloatBuffer;
 

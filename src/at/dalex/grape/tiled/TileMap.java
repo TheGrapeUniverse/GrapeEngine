@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-import at.dalex.grape.renderer.DisplayManager;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
+import at.dalex.grape.graphics.DisplayManager;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
 
 /**
  * Created by Da vid on 20.10.2017.

@@ -9,8 +9,6 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import at.dalex.grape.renderer.DisplayManager;
-
 public class FrameBufferObject {
 
 	private int width;

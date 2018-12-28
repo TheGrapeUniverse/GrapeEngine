@@ -1,7 +1,7 @@
 package at.dalex.grape.toolbox;
 
-import at.dalex.grape.renderer.VertexArrayObject;
-import at.dalex.grape.renderer.mesh.RawModel;
+import at.dalex.grape.graphics.VertexArrayObject;
+import at.dalex.grape.graphics.mesh.RawModel;
 
 public class Loader {
 
@@ -12,7 +12,7 @@ public class Loader {
 
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
-		vao.storeDataInAttributeList(0, 3, vertices);
+		vao.storeDataInAttributeList(0, 3, vertices, false);
 		vao.unbindVAO();
 
 		return new RawModel(vao.getID(), indices.length);
@@ -23,9 +23,9 @@ public class Loader {
 
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
-		vao.storeDataInAttributeList(0, 3, vertices);
-		vao.storeDataInAttributeList(1, 2, textureCoordinates);
-		vao.storeDataInAttributeList(2, 3, normals);
+		vao.storeDataInAttributeList(0, 3, vertices, false);
+		vao.storeDataInAttributeList(1, 2, textureCoordinates, true);
+		vao.storeDataInAttributeList(2, 3, normals, false);
 		vao.unbindVAO();
 
 		return new RawModel(vao.getID(), indices.length);
@@ -36,8 +36,8 @@ public class Loader {
 
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
-		vao.storeDataInAttributeList(0, 3, vertices);
-		vao.storeDataInAttributeList(1, 2, textureCoordinates);
+		vao.storeDataInAttributeList(0, 3, vertices, false);
+		vao.storeDataInAttributeList(1, 2, textureCoordinates, true);
 		vao.unbindVAO();
 
 		return new RawModel(vao.getID(), indices.length);
@@ -47,7 +47,7 @@ public class Loader {
 		vao = new VertexArrayObject();
 
 		vao.bindVAO();
-		vao.storeDataInAttributeList(0, coordinateSize, vertices);
+		vao.storeDataInAttributeList(0, coordinateSize, vertices, false);
 		vao.unbindVAO();
 
 		//Divide by n because we have n coordinates per vertex
@@ -71,7 +71,7 @@ public class Loader {
 		vao = new VertexArrayObject();
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
-		vao.storeDataInAttributeList(0, 3, vertices);
+		vao.storeDataInAttributeList(0, 3, vertices, false);
 		vao.unbindVAO();
 
 		return new RawModel(vao.getID(), indices.length);
@@ -93,8 +93,8 @@ public class Loader {
 		vao = new VertexArrayObject();
 		vao.bindVAO();
 		vao.bindIndicesBuffer(indices);
-		vao.storeDataInAttributeList(0, 3, vertices);
-		vao.storeDataInAttributeList(1, 2, textureCoordinates);
+		vao.storeDataInAttributeList(0, 3, vertices, false);
+		vao.storeDataInAttributeList(1, 2, textureCoordinates, true);
 		vao.unbindVAO();
 
 		return new RawModel(vao.getID(), indices.length);

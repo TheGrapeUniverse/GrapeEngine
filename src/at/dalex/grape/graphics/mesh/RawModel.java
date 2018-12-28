@@ -1,6 +1,6 @@
-package at.dalex.grape.renderer.mesh;
+package at.dalex.grape.graphics.mesh;
 
-import at.dalex.grape.renderer.VertexArrayObject;
+import at.dalex.grape.graphics.VertexArrayObject;
 
 public class RawModel {
 

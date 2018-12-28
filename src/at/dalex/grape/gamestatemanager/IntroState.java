@@ -6,10 +6,10 @@ import java.io.File;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.renderer.DisplayManager;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
-import at.dalex.grape.renderer.graphicsutil.Image;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.DisplayManager;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
+import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 
 public class IntroState extends GameState {
 

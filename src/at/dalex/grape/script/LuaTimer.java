@@ -4,7 +4,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.renderer.Timer;
+import at.dalex.grape.graphics.Timer;
 
 class LuaTimer {
 

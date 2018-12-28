@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer;
+package at.dalex.grape.graphics;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -26,7 +26,7 @@ public class VertexArrayObject {
 	 * @param attributeNumber Attribute slot to store data in
 	 * @param data The data you want to store
 	 */
-	public void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+	public void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, boolean dynamic) {
 		bindVAO();
 		
 		int vboID = GL15.glGenBuffers();
@@ -35,7 +35,7 @@ public class VertexArrayObject {
 		
 		FloatBuffer buffer = storeDataInNewFloatBuffer(data);
 		
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, dynamic ? GL15.GL_DYNAMIC_DRAW : GL15.GL_STATIC_DRAW);
 		
 		//Store data
 		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);

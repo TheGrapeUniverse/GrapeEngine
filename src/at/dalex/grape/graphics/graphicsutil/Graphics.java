@@ -1,16 +1,15 @@
-package at.dalex.grape.renderer.graphicsutil;
+package at.dalex.grape.graphics.graphicsutil;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-import at.dalex.grape.renderer.mesh.RawModel;
-import at.dalex.grape.renderer.mesh.TexturedModel;
-import at.dalex.grape.renderer.shader.ImageShader;
-import at.dalex.grape.renderer.shader.SolidColorShader;
+import at.dalex.grape.graphics.mesh.RawModel;
+import at.dalex.grape.graphics.mesh.TexturedModel;
+import at.dalex.grape.graphics.shader.ImageShader;
+import at.dalex.grape.graphics.shader.SolidColorShader;
 import at.dalex.grape.toolbox.Loader;
 import at.dalex.grape.toolbox.Toolbox;
 
@@ -68,7 +67,7 @@ public class Graphics {
 	 * Draws an {@link Image} at the given X Y Coordinates.
 	 * Set the desired width and height using those parameters.
 	 * 
-	 * @param image The {@link Image} you want to be drawn
+	 * @param textureId The id of the texture you want to be drawn
 	 * @param x The target X-coordinate
 	 * @param y The target Y-coordinate
 	 * @param width The desired width
@@ -78,7 +77,11 @@ public class Graphics {
 		Matrix4f matrices = transformMatrix(projectionAndViewMatrix, x, y, width, height, 0f);
 		imageShader.drawMesh(new TexturedModel(defaultRectangleModel, textureId), matrices);
 	}
-	
+
+	public static void drawImageFromAtlas(TextureAtlas atlas, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
+		//float[] imageUVs = atlas.recalculateUVCoordinates(rectangleUvs)
+	}
+
 	/**
 	 * Draws a filled rectangle at the given X Y Coordinates.
 	 * Set the desired width and height using those parameters.

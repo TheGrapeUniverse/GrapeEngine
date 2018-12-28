@@ -1,245 +1,108 @@
 package at.dalex.grape.graphics;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
-
+import at.dalex.grape.graphics.graphicsutil.Image;
 import org.lwjgl.opengl.GL11;
 
-import at.dalex.grape.renderer.graphicsutil.Image;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class TrueTypeFont {
 
-//	private static final SGL GL = Renderer.get();
-	private IntObject[] charArray;
-	private Map customChars;
-	private boolean antiAlias;
-	private int fontSize;
-	private int fontHeight;
-	private Image fontTexture;
-	private int textureWidth;
-	private int textureHeight;
-	private java.awt.Font font;
-	private FontMetrics fontMetrics;
+    private CharBounds[] charArray = new CharBounds[256];
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias, char[] additionalChars) {
-		
-		this.charArray = new IntObject[256];
+    private boolean antiAlias;
+    private int fontSize;
+    private int fontHeight;
 
-		this.customChars = new HashMap();
-		this.fontSize = 0;
-		this.fontHeight = 0;
-		this.textureWidth = 512;
-		this.textureHeight = 512;
+    private Image fontTexture;
+    private int textureWidth = 512;
+    private int textureHeight = 512;
 
-		this.font = font;
-		this.fontSize = font.getSize();
-		this.antiAlias = antiAlias;
+    private Font font;
+    private FontMetrics fontMetrics;
 
-		createSet(additionalChars);
-	}
+    private class CharBounds {
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+    }
 
-	public TrueTypeFont(java.awt.Font font, boolean antiAlias) {
-		this(font, antiAlias, null);
-	}
+    public TrueTypeFont(Font font, boolean antiAlias) {
+        this.font = font;
+        this.fontSize = font.getSize();
+        this.antiAlias = antiAlias;
+    }
 
-	private BufferedImage getFontImage(char ch) {
-		BufferedImage tempfontImage = new BufferedImage(1, 1, 2);
+    private BufferedImage getCharacterImage(char character) {
+        //TODO: Wird hier ein neues BufferedImage und Graphics nur für die zeichenhöhe erstellt?
+        //      Eine Überarbeitung wäre hier mal gut!
 
-		Graphics2D g = (Graphics2D) tempfontImage.getGraphics();
-		if (this.antiAlias == true) {
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
+        BufferedImage tempFontImage = new BufferedImage(1, 1, 2);
+        Graphics2D g = (Graphics2D) tempFontImage.getGraphics();
+        if (antiAlias)
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g.setFont(this.font);
-		this.fontMetrics = g.getFontMetrics();
-		int charwidth = this.fontMetrics.charWidth(ch);
+        g.setFont(this.font);
+        this.fontMetrics = g.getFontMetrics();
 
-		if (charwidth <= 0) {
-			charwidth = 1;
-		}
-		int charheight = this.fontMetrics.getHeight();
-		if (charheight <= 0) {
-			charheight = this.fontSize;
-		}
+        int charWidth = this.fontMetrics.charWidth(character);
+        int charHeight = this.fontMetrics.getHeight();
 
-		BufferedImage fontImage = new BufferedImage(charwidth, charheight, 2);
+        charWidth  = charWidth  <= 0 ? 1 : charWidth;
+        charHeight = charHeight <= 0 ? this.fontSize : charHeight;
 
-		Graphics2D gt = (Graphics2D) fontImage.getGraphics();
-		if (this.antiAlias == true) {
-			gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
+        BufferedImage charImage = new BufferedImage(charWidth, charHeight, 2);
+        Graphics2D gt = (Graphics2D) charImage.getGraphics();
+        if (antiAlias)
+            gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		gt.setFont(this.font);
+        gt.setFont(this.font);
+        gt.setColor(Color.WHITE);
+        gt.drawString(String.valueOf(character), 0, this.fontMetrics.getAscent());
 
-		gt.setColor(Color.WHITE);
-		int charx = 0;
-		int chary = 0;
-		gt.drawString(String.valueOf(ch), charx, chary + this.fontMetrics.getAscent());
+        return charImage;
+    }
 
-		return fontImage;
-	}
+    public void drawString(int x, int y, String text, Color color, int startIndex, int endIndex) {
+        int totalWidth = 0;
 
-	private void createSet(char[] customCharsArray) {
-		if ((customCharsArray != null) && (customCharsArray.length > 0)) {
-			this.textureWidth *= 2;
-		}
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        for (int i = 0; i < text.length(); ++i) {
+            char currentChar = text.charAt(i);
+            CharBounds bounds = this.charArray[currentChar];
+            if (bounds != null) {
+                if (i <= startIndex || i <= endIndex) {
+                    drawQuad(   x + totalWidth,                 y,                          //Quad Position on screen 1
+                                x + totalWidth + bounds.width,  y + bounds.height,          //Quad Position on screen 2
+                                bounds.x,                       bounds.y,                   //Quad Position on atlas 1
+                                bounds.x + bounds.width,        bounds.y + bounds.height);  //Quad Position on atlas 2
+                }
+            }
+        }
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+    }
 
-		BufferedImage imgTemp = new BufferedImage(this.textureWidth, this.textureHeight, 2);
-		Graphics2D g = (Graphics2D) imgTemp.getGraphics();
+    private void drawQuad(int drawX, int drawY, int drawX2, int drawY2, int srcX, int srcY, int srcX2, int srcY2) {
+        int width = drawX2 - drawX;
+        int height = drawY2 - drawY;
 
-		g.setColor(new Color(255, 255, 255, 1));
-		g.fillRect(0, 0, this.textureWidth, this.textureHeight);
+        //TODO: Update drawing engine to allow a texture atlas. thank you.
+    }
 
-		int rowHeight = 0;
-		int positionX = 0;
-		int positionY = 0;
+    public int getWidth(String text) {
+        int totalWidth = 0;
+        CharBounds bounds;
+        char currentChar = 0;
+        for (int i = 0; i < text.length(); ++i) {
+            currentChar = text.charAt(i);
+            bounds = currentChar < 255 ? this.charArray[currentChar] : this.charArray[0]; //Cap characters
+            if (bounds != null) totalWidth += bounds.width;
+        }
+        return totalWidth;
+    }
 
-		int customCharsLength = (customCharsArray != null) ? customCharsArray.length : 0;
-
-		for (int i = 0; i < 256 + customCharsLength; ++i) {
-			char ch = (i < 256) ? (char) i : customCharsArray[(i - 256)];
-
-			BufferedImage fontImage = getFontImage(ch);
-
-			IntObject newIntObject = new IntObject();
-
-			newIntObject.width = fontImage.getWidth();
-			newIntObject.height = fontImage.getHeight();
-
-			if (positionX + newIntObject.width >= this.textureWidth) {
-				positionX = 0;
-				positionY += rowHeight;
-				rowHeight = 0;
-			}
-
-			newIntObject.storedX = positionX;
-			newIntObject.storedY = positionY;
-
-			if (newIntObject.height > this.fontHeight) {
-				this.fontHeight = newIntObject.height;
-			}
-
-			if (newIntObject.height > rowHeight) {
-				rowHeight = newIntObject.height;
-			}
-
-			g.drawImage(fontImage, positionX, positionY, null);
-
-			positionX += newIntObject.width;
-
-			if (i < 256)
-				this.charArray[i] = newIntObject;
-			else {
-				this.customChars.put(new Character(ch), newIntObject);
-			}
-
-			fontImage = null;
-		}
-
-		this.fontTexture = ImageUtils.convertBufferedImage(imgTemp);
-	}
-
-	private void drawQuad(float drawX, float drawY, float drawX2, float drawY2, float srcX, float srcY, float srcX2,
-			float srcY2) {
-		float DrawWidth = drawX2 - drawX;
-		float DrawHeight = drawY2 - drawY;
-		float TextureSrcX = srcX / this.textureWidth;
-		float TextureSrcY = srcY / this.textureHeight;
-		float SrcWidth = srcX2 - srcX;
-		float SrcHeight = srcY2 - srcY;
-		float RenderWidth = SrcWidth / this.textureWidth;
-		float RenderHeight = SrcHeight / this.textureHeight;
-
-		GL11.glTexCoord2f(TextureSrcX, TextureSrcY);
-		GL11.glVertex2f(drawX, drawY);
-		GL11.glTexCoord2f(TextureSrcX, TextureSrcY + RenderHeight);
-		GL11.glVertex2f(drawX, drawY + DrawHeight);
-		GL11.glTexCoord2f(TextureSrcX + RenderWidth, TextureSrcY + RenderHeight);
-		GL11.glVertex2f(drawX + DrawWidth, drawY + DrawHeight);
-		GL11.glTexCoord2f(TextureSrcX + RenderWidth, TextureSrcY);
-		GL11.glVertex2f(drawX + DrawWidth, drawY);
-	}
-
-	public int getWidth(String whatchars) {
-		int totalwidth = 0;
-		IntObject intObject = null;
-		int currentChar = 0;
-		for (int i = 0; i < whatchars.length(); ++i) {
-			currentChar = whatchars.charAt(i);
-			if (currentChar < 256)
-				intObject = this.charArray[currentChar];
-			else {
-				intObject = (IntObject) this.customChars.get(new Character((char) currentChar));
-			}
-
-			if (intObject != null)
-				totalwidth += intObject.width;
-		}
-		return totalwidth;
-	}
-
-	public int getHeight() {
-		return this.fontHeight;
-	}
-
-	public int getHeight(String HeightString) {
-		return this.fontHeight;
-	}
-
-	public int getLineHeight() {
-		return this.fontHeight;
-	}
-
-	public void drawString(float x, float y, String whatchars, Color color) {
-		drawString(x, y, whatchars, color, 0, whatchars.length() - 1);
-	}
-
-	public void drawString(float x, float y, String whatchars, Color color, int startIndex, int endIndex) {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTexture.getTextureId());
-
-		IntObject intObject = null;
-
-		GL11.glBegin(GL11.GL_QUADS);
-
-		int totalwidth = 0;
-		for (int i = 0; i < whatchars.length(); ++i) {
-			int charCurrent = whatchars.charAt(i);
-			if (charCurrent < 256)
-				intObject = this.charArray[charCurrent];
-			else {
-				intObject = (IntObject) this.customChars.get(new Character((char) charCurrent));
-			}
-
-			if (intObject != null) {
-				if ((i >= startIndex) || (i <= endIndex)) {
-					drawQuad(x + totalwidth, y, x + totalwidth + intObject.width, y + intObject.height,
-							intObject.storedX, intObject.storedY, intObject.storedX + intObject.width,
-							intObject.storedY + intObject.height);
-				}
-
-				totalwidth += intObject.width;
-			}
-		}
-
-		GL11.glEnd();
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-	}
-
-	public void drawString(float x, float y, String whatchars) {
-		drawString(x, y, whatchars, Color.white);
-	}
-
-	private class IntObject {
-		public int width;
-		public int height;
-		public int storedX;
-		public int storedY;
-	}
+    public int getHeight() {
+        return this.fontHeight;
+    }
 }

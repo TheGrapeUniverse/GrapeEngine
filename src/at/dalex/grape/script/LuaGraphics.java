@@ -11,9 +11,9 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.CoerceLuaToJava;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
-import at.dalex.grape.renderer.graphicsutil.Image;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
+import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 
 class LuaGraphics {
 

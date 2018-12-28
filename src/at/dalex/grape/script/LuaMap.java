@@ -9,7 +9,7 @@ import org.luaj.vm2.lib.ZeroArgFunction;
 import at.dalex.grape.gamestatemanager.PlayState;
 import at.dalex.grape.graphics.Tileset;
 import at.dalex.grape.map.MapReader;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 import at.dalex.grape.toolbox.Dialog;
 
 class LuaMap {

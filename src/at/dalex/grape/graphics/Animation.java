@@ -1,8 +1,8 @@
 package at.dalex.grape.graphics;
 
 import java.awt.image.BufferedImage;
-import at.dalex.grape.renderer.graphicsutil.Image;
-import at.dalex.grape.renderer.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 
 /**
  * This class takes in an image (atlas) an converts it into an animation cycle.

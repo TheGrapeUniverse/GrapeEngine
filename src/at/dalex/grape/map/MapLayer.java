@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.graphics.Tileset;
-import at.dalex.grape.renderer.DisplayManager;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
+import at.dalex.grape.graphics.DisplayManager;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
 
 public class MapLayer {
 

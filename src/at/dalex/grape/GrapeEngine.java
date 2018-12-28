@@ -6,18 +6,16 @@ import org.lwjgl.opengl.GL11;
 import at.dalex.grape.developer.GameInfo;
 import at.dalex.grape.developer.ResourceMonitor;
 import at.dalex.grape.gamestatemanager.GameStateManager;
-import at.dalex.grape.renderer.Camera;
-import at.dalex.grape.renderer.DisplayInterface;
-import at.dalex.grape.renderer.DisplayManager;
-import at.dalex.grape.renderer.graphicsutil.Graphics;
+import at.dalex.grape.graphics.Camera;
+import at.dalex.grape.graphics.DisplayCallback;
+import at.dalex.grape.graphics.DisplayManager;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.resource.DefaultResources;
 import at.dalex.grape.script.LuaManager;
 import at.dalex.grape.tiled.TilesetManager;
-import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.OSManager;
-import at.dalex.grape.toolbox.Type;
 
-public abstract class GrapeEngine implements DisplayInterface {
+public abstract class GrapeEngine implements DisplayCallback {
 
 	private String gameLocation;
 	private DisplayManager displayManager;

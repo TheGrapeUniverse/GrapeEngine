@@ -5,7 +5,7 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.renderer.DisplayManager;
+import at.dalex.grape.graphics.DisplayManager;
 
 class LuaDisplay {
 

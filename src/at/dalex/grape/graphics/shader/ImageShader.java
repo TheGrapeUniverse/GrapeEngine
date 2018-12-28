@@ -1,16 +1,14 @@
-package at.dalex.grape.renderer.shader;
+package at.dalex.grape.graphics.shader;
 
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-
-import java.io.IOException;
 
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
-import at.dalex.grape.renderer.mesh.TexturedModel;
+import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.resource.FileContentReader;
 import at.dalex.grape.toolbox.MemoryManager;
 

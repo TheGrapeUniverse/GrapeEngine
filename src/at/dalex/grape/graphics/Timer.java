@@ -1,4 +1,4 @@
-package at.dalex.grape.renderer;
+package at.dalex.grape.graphics;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
