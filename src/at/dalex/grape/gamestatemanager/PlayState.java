@@ -12,10 +12,10 @@ import at.dalex.grape.script.LuaManager;
 
 public class PlayState extends GameState {
 	
-	LuaManager luaManager;
+	private LuaManager luaManager;
 	public static Map current_map;
 	public static ArrayList<Entity> entities = new ArrayList<>();
-	
+
 	@Override
 	public void init() {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
@@ -34,7 +34,7 @@ public class PlayState extends GameState {
 		for (Entity entity : entities) {
 			entity.draw(projectionAndViewMatrix);
 		}
-		
+
 		Graphics.enableBlending(false);
 	}
 

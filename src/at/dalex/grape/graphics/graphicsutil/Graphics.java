@@ -78,8 +78,14 @@ public class Graphics {
 		imageShader.drawMesh(new TexturedModel(defaultRectangleModel, textureId), matrices);
 	}
 
-	public static void drawImageFromAtlas(TextureAtlas atlas, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
-		//float[] imageUVs = atlas.recalculateUVCoordinates(rectangleUvs)
+	public static void drawImageFromAtlas(TextureAtlas atlas, int imageId, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
+		Matrix4f matrices = transformMatrix(projectionAndViewMatrix, x, y, width, height, 0f);
+		TexturedModel model = new TexturedModel(defaultRectangleModel, 0);
+		model.useTextureAtlas(true);
+		model.setTextureAtlas(atlas);
+		model.setActiveAtlasTextureIndex(imageId);
+
+		imageShader.drawMesh(model, matrices);
 	}
 
 	/**

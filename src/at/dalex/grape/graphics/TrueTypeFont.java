@@ -1,6 +1,10 @@
 package at.dalex.grape.graphics;
 
+import at.dalex.grape.GrapeEngine;
+import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -14,7 +18,7 @@ public class TrueTypeFont {
     private int fontSize;
     private int fontHeight;
 
-    private Image fontTexture;
+    private TextureAtlas charAtlas;
     private int textureWidth = 512;
     private int textureHeight = 512;
 
@@ -32,6 +36,54 @@ public class TrueTypeFont {
         this.font = font;
         this.fontSize = font.getSize();
         this.antiAlias = antiAlias;
+
+        createImageSet();
+    }
+
+    private void createImageSet() {
+        BufferedImage imgTemp = new BufferedImage(this.textureWidth, this.textureHeight, 2);
+        Graphics2D g = (Graphics2D) imgTemp.getGraphics();
+
+        g.setColor(new java.awt.Color(255, 255, 0, 100));   //TODO: Texte haben einen leicht schwarzen Hintergrund. ==> Tranparenz auf 1 gesetzt!
+        g.fillRect(0, 0, this.textureWidth, this.textureHeight);
+
+        int rowHeight = 0;
+        int positionX = 0;
+        int positionY = 0;
+
+        for (int i = 0; i < 256; i++) {
+            BufferedImage fontImage = getCharacterImage((char) i);
+            CharBounds charBounds = new CharBounds();
+
+            charBounds.width = fontImage.getWidth();
+            charBounds.height = fontImage.getHeight();
+
+            if (positionX + charBounds.width >= this.textureWidth) {
+                positionX = 0;
+                positionY += rowHeight;
+                rowHeight = 0;
+            }
+
+            charBounds.x = positionX;
+            charBounds.y = positionY;
+
+            if (charBounds.height > this.fontHeight) {
+                this.fontHeight = charBounds.height;
+            }
+
+            if (charBounds.height > rowHeight) {
+                rowHeight = charBounds.height;
+            }
+
+            g.drawImage(fontImage, positionX, positionY, null);
+
+            positionX += charBounds.width;
+
+            this.charArray[i] = charBounds;
+        }
+
+        Image charSetImage = ImageUtils.convertBufferedImage(imgTemp);
+        this.charAtlas = new TextureAtlas(charSetImage.getTextureId(), charSetImage.getWidth(), 15 /* <-- = Math.sqrt(256 [Anzahl Zeichen]) */);
     }
 
     private BufferedImage getCharacterImage(char character) {
@@ -64,6 +116,11 @@ public class TrueTypeFont {
         return charImage;
     }
 
+    public void drawString(int x, int y, String text) {
+        this.drawString(x, y, text, Color.white, 0, text.length() - 1);
+        Graphics.drawImage(charAtlas.getTextureId(), 0, 0, 512, 512, GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
+    }
+
     public void drawString(int x, int y, String text, Color color, int startIndex, int endIndex) {
         int totalWidth = 0;
 
@@ -78,6 +135,8 @@ public class TrueTypeFont {
                                 bounds.x,                       bounds.y,                   //Quad Position on atlas 1
                                 bounds.x + bounds.width,        bounds.y + bounds.height);  //Quad Position on atlas 2
                 }
+
+                totalWidth += bounds.width;
             }
         }
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -87,7 +146,16 @@ public class TrueTypeFont {
         int width = drawX2 - drawX;
         int height = drawY2 - drawY;
 
-        //TODO: Update drawing engine to allow a texture atlas. thank you.
+        int cellX = srcX / charAtlas.getCellSize();
+        int cellY = srcY / charAtlas.getCellSize();
+
+        int cellId = charAtlas.getNumberOfRows() * cellY + cellX;
+
+        //TODO: Conclusion: Atlas breite und höhe sind quadrate, die boxen der buchstaben
+        //      sind aber meistens keine! ==> custom bounds im shader blah blah blah ...
+
+        //Change matrix to orthographic screen matrix when moving camera! (If you're here again <3)
+        Graphics.drawImageFromAtlas(charAtlas, cellId, drawX, drawY, width, height, GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
     }
 
     public int getWidth(String text) {
