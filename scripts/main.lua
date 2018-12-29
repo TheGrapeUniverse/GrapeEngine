@@ -11,7 +11,7 @@ function init()
 
   	entities.player = Entity.create(0, 10, LivingType.NEUTRAL, 200, "scripts/entity/player.lua");
 
-	debugFont = Font.createFont("Arial", 38, true);
+	debugFont = Font.createFont("Arial", 48, true);
 end
 
 function draw()

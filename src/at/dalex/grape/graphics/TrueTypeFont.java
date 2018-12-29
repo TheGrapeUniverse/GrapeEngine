@@ -19,8 +19,8 @@ public class TrueTypeFont {
     private int fontHeight;
 
     private TextureAtlas charAtlas;
-    private int textureWidth = 512;
-    private int textureHeight = 512;
+    private int textureWidth = 1024;
+    private int textureHeight = 1024;
 
     private Font font;
     private FontMetrics fontMetrics;
@@ -77,7 +77,7 @@ public class TrueTypeFont {
 
             g.drawImage(fontImage, positionX, positionY, null);
 
-            positionX += charBounds.width;
+            positionX += 64;
 
             this.charArray[i] = charBounds;
         }
@@ -155,7 +155,7 @@ public class TrueTypeFont {
         //      sind aber meistens keine! ==> custom bounds im shader blah blah blah ...
 
         //Change matrix to orthographic screen matrix when moving camera! (If you're here again <3)
-        Graphics.drawImageFromAtlas(charAtlas, cellId, drawX, drawY, width, height, GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
+        Graphics.drawImageFromAtlas(charAtlas, cellId, drawX, drawY, height, height, GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
     }
 
     public int getWidth(String text) {
