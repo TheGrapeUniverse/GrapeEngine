@@ -2,7 +2,9 @@ package at.dalex.grape.graphics.graphicsutil;
 
 import java.awt.Color;
 
+import at.dalex.grape.graphics.font.GrapeFont;
 import at.dalex.grape.graphics.mesh.Model;
+import at.dalex.grape.graphics.shader.FontShader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -19,9 +21,10 @@ public class Graphics {
 		modelUtil = new ModelUtil();
 	}
 	
-	private static ModelUtil modelUtil;
+	private static ModelUtil 		modelUtil;
 	private static SolidColorShader solidColorShader;
-	private static ImageShader imageShader;
+	private static ImageShader 		imageShader;
+	private static FontShader		fontShader;
 	
 	private static float[] rectangleUvs = new float[] {
 			0, 0,
@@ -48,7 +51,20 @@ public class Graphics {
 		imageShader = new ImageShader();
 		defaultRectangleModel = new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
 	}
-	
+
+	/**
+	 * Draws the specified text using the given Font
+	 * at the given X Y Coordinates.
+
+	 * @param font The look of the font
+	 * @param text The text you want to render
+	 * @param x The target X-coordinate
+	 * @param y The target Y-coordinate
+	 */
+	public static void drawText(GrapeFont font, String text, int x, int y, Matrix4f projectionAndViewMatrix) {
+		Matrix4f transformationMatrix = projectionAndViewMatrix.translate(new Vector3f(x, y, 0.0f));
+	}
+
 	/**
 	 * Draws an {@link Image} at the given X Y Coordinates.
 	 * Set the desired width and height using those parameters.

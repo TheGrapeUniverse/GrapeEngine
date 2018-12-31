@@ -1,7 +1,9 @@
 package at.dalex.grape.gamestatemanager;
 
+import java.awt.*;
 import java.util.ArrayList;
 
+import at.dalex.grape.graphics.font.GrapeFont;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
@@ -16,11 +18,14 @@ public class PlayState extends GameState {
 	public static Map current_map;
 	public static ArrayList<Entity> entities = new ArrayList<>();
 
+	private GrapeFont font;
+
 	@Override
 	public void init() {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
+		font = new GrapeFont(new Font("Arial", Font.PLAIN, 48), true);
 	}
 
 	@Override
@@ -34,6 +39,8 @@ public class PlayState extends GameState {
 		for (Entity entity : entities) {
 			entity.draw(projectionAndViewMatrix);
 		}
+
+		Graphics.drawImage(font.getAtlasImage(), 0, 0, 720, 720, projectionAndViewMatrix);
 
 		Graphics.enableBlending(false);
 	}

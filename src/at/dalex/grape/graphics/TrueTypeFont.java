@@ -55,8 +55,8 @@ public class TrueTypeFont {
             BufferedImage fontImage = getCharacterImage((char) i);
             CharBounds charBounds = new CharBounds();
 
-            charBounds.width = fontImage.getWidth();
-            charBounds.height = fontImage.getHeight();
+            charBounds.width = 64;  //fontImage.getWidth();
+            charBounds.height = 64; //fontImage.getHeight();
 
             if (positionX + charBounds.width >= this.textureWidth) {
                 positionX = 0;
