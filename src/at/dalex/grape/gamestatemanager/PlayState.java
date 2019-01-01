@@ -11,6 +11,7 @@ import at.dalex.grape.entity.Entity;
 import at.dalex.grape.map.Map;
 import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.script.LuaManager;
+import org.lwjgl.opengl.GL11;
 
 public class PlayState extends GameState {
 	
@@ -25,7 +26,7 @@ public class PlayState extends GameState {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
-		font = new GrapeFont(new Font("Arial", Font.PLAIN, 48), true);
+		font = new GrapeFont("C:\\Users\\Clemi\\Desktop\\OpenSans-Light.ttf", 12);
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class PlayState extends GameState {
 			entity.draw(projectionAndViewMatrix);
 		}
 
-		Graphics.drawImage(font.getAtlasImage(), 0, 0, 720, 720, projectionAndViewMatrix);
+		font.drawString("GrapeEngine Font-Rendering is working as intended!", 0, 16, Color.GREEN, projectionAndViewMatrix);
 
 		Graphics.enableBlending(false);
 	}

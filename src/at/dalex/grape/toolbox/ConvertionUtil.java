@@ -1,5 +1,6 @@
 package at.dalex.grape.toolbox;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,10 @@ public class ConvertionUtil {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public static float[] normalizeColors(Color color) {
+        return normalizeColors(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     public static float[] normalizeColors(int r, int g, int b, int a) {

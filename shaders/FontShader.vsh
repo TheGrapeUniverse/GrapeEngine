@@ -1,19 +1,12 @@
 #version 330
 
 uniform mat4 projectionMatrix;
+layout (location = 0) in vec4 vertex; // vec2 pos, vec2 texPos
 
-layout (location = 0) in vec3 position;
-
-uniform vec2  atlas_offset;
-uniform float atlas_rows;
-
-in  vec2 textureCoordinates;
-out vec2 pass_textureCoordinates;
+out vec2 pass_textureCoord;
 
 void main()
 {
-	pass_textureCoordinates = textureCoordinates / atlas_rows;
-	pass_textureCoordinates += atlas_offset;
-
-	gl_Position = projectionMatrix * vec4(position, 1);
+	gl_Position = projectionMatrix * vec4(vertex.xy, 0.0, 1.0);
+	pass_textureCoord = vertex.zw;
 }

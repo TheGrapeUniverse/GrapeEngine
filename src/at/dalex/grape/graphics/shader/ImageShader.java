@@ -43,7 +43,6 @@ public class ImageShader extends ShaderProgram {
 		glEnableVertexAttribArray(1);
 		
 		getUniformLoader().loadMatrix(position_projectionMatrix, projectionAndViewMatrix);
-
 		getUniformLoader().loadBoolean(position_use_atlas, model.isUsingTextureAtlas());
 
 		if (model.isUsingTextureAtlas()) {

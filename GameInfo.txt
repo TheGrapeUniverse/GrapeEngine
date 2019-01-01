@@ -7,6 +7,6 @@
 		"window_override": "false",
 
 		"use_vsync": "false"
-		"fullscreen": "true"
+		"fullscreen": "false"
 	}
 }

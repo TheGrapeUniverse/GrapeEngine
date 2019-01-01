@@ -29,20 +29,34 @@ public class VertexArrayObject {
 	 * @return The ID of the generated VertexBufferObject.
 	 */
 	public int storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, boolean dynamic) {
+		return storeDataInAttributeList(attributeNumber, coordinateSize, data, 0, dynamic);
+	}
+
+	/**
+	 * Store an array of float values in a new attribute slot of this {@link VertexArrayObject} with a specific stride.
+	 * @param attributeNumber Attribute slot to store data in
+	 * @param data The data you want to store
+	 * @param stride The stride of the data
+	 *
+	 * @return The ID of the generated VertexBufferObject.
+	 */
+	public int storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data, int stride, boolean dynamic) {
 		bindVAO();
-		
+
 		int vboID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
 		MemoryManager.createdVBOs.add(vboID);
-		
+
 		FloatBuffer buffer = storeDataInNewFloatBuffer(data);
-		
+
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, dynamic ? GL15.GL_DYNAMIC_DRAW : GL15.GL_STATIC_DRAW);
-		
+
 		//Store data
-		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
+		GL20.glEnableVertexAttribArray(attributeNumber);
+		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, stride, 0);
+		GL20.glDisableVertexAttribArray(attributeNumber);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
+
 		unbindVAO();
 
 		return vboID;
