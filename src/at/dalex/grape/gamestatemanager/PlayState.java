@@ -3,6 +3,7 @@ package at.dalex.grape.gamestatemanager;
 import java.awt.*;
 import java.util.ArrayList;
 
+import at.dalex.grape.graphics.DisplayManager;
 import at.dalex.grape.graphics.font.GrapeFont;
 import org.joml.Matrix4f;
 
@@ -26,7 +27,7 @@ public class PlayState extends GameState {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
-		font = new GrapeFont("C:\\Users\\Clemi\\Desktop\\OpenSans-Light.ttf", 12);
+		font = new GrapeFont("resources/fonts/arial.ttf", 24);
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class PlayState extends GameState {
 			entity.draw(projectionAndViewMatrix);
 		}
 
-		font.drawString("GrapeEngine Font-Rendering is working as intended!", 0, 16, Color.GREEN, projectionAndViewMatrix);
+		font.drawString("Grape-Engine", 0, 0, Color.GREEN, projectionAndViewMatrix);
 
 		Graphics.enableBlending(false);
 	}

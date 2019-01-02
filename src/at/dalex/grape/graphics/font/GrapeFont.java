@@ -4,6 +4,7 @@ package at.dalex.grape.graphics.font;
 import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.graphics.shader.FontShader;
 import at.dalex.grape.toolbox.ConvertionUtil;
+import at.dalex.grape.toolbox.Dialog;
 import at.dalex.grape.toolbox.IOUtil;
 import at.dalex.grape.toolbox.MemoryManager;
 import org.joml.Matrix4f;
@@ -16,6 +17,7 @@ import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -27,6 +29,9 @@ public class GrapeFont {
     private final int BITMAP_WIDTH  = 2048;
     private final int BITMAP_HEIGHT = 2048;
 
+    private Canvas canvas = new Canvas(); //Used to get FontMetrics
+    private Font font;
+    private FontMetrics fontMetrics;
     private int fontSize;
 
     private final STBTTAlignedQuad quad  = STBTTAlignedQuad.malloc();
@@ -40,9 +45,18 @@ public class GrapeFont {
     private int vaoID;
     private int vboID;
 
-
     public GrapeFont(String fontPath, int fontSize) {
         this.fontSize = fontSize;
+
+        try {
+            this.font = Font.createFont(Font.TRUETYPE_FONT, new File(fontPath)).deriveFont(12f);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            Dialog.error("Font Error", "Could not create Font from file '" + fontPath + "'!");
+        }
+
+        this.fontMetrics = canvas.getFontMetrics(font);
+
         loadFont(fontPath);
         createVAO();
     }
@@ -125,17 +139,25 @@ public class GrapeFont {
             STBTruetype.stbtt_GetPackedQuad(charData, BITMAP_WIDTH, BITMAP_HEIGHT, text.charAt(i), xBuffer, yBuffer,
                     quad, false); //false?
 
+            int yOffset = fontMetrics.getAscent();
+
             float[] vertices = {
                     //Triangle 1
-                    (quad.x0() / 2), (quad.y0() / 2), quad.s0(), quad.t0(),
-                    (quad.x0() / 2), (quad.y1() / 2), quad.s0(), quad.t1(),
-                    (quad.x1() / 2), (quad.y1() / 2), quad.s1(), quad.t1(),
+                    (quad.x0() / 2), (quad.y0() / 2) + yOffset, quad.s0(), quad.t0(),
+                    (quad.x0() / 2), (quad.y1() / 2) + yOffset, quad.s0(), quad.t1(),
+                    (quad.x1() / 2), (quad.y1() / 2) + yOffset, quad.s1(), quad.t1(),
 
                     //Triangle 2
-                    (quad.x0() / 2), (quad.y0() / 2), quad.s0(), quad.t0(),
-                    (quad.x1() / 2), (quad.y1() / 2), quad.s1(), quad.t1(),
-                    (quad.x1() / 2), (quad.y0() / 2), quad.s1(), quad.t0()
+                    (quad.x0() / 2), (quad.y0() / 2) + yOffset, quad.s0(), quad.t0(),
+                    (quad.x1() / 2), (quad.y1() / 2) + yOffset, quad.s1(), quad.t1(),
+                    (quad.x1() / 2), (quad.y0() / 2) + yOffset, quad.s1(), quad.t0()
+
             };
+
+            System.out.println("height: " + fontMetrics.getHeight());
+            System.out.println("descend: " + fontMetrics.getDescent());
+            System.out.println("ascend: " + fontMetrics.getAscent());
+            System.out.println("y: " + quad.y0());
 
             //Update vertex data
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
