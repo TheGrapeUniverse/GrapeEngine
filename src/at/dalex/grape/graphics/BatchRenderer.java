@@ -5,10 +5,7 @@ import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.toolbox.MemoryManager;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.ArrayList;
 public class BatchRenderer {
 
     private static BatchShader shader = new BatchShader();
-    public ArrayList<BatchInfo> batchQueue = new ArrayList<>();
+    private ArrayList<BatchInfo> batchQueue = new ArrayList<>();
 
     private int vaoId;
     private int vboId;
@@ -72,15 +69,55 @@ public class BatchRenderer {
         //Prepare projection matrix
         projection.get(matrixBuffer);
         GL20.glUniformMatrix4fv(shader.position_projectionMatrix, false, matrixBuffer);
-
-        //Prepare texture
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, );
 
-        //TODO: Switch textures for every batch or just stick to one when creating the BatchRenderer?
+        GL30.glBindVertexArray(vaoId);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+        GL20.glEnableVertexAttribArray(0);
 
+        for (BatchInfo info : batchQueue) {
+            //Prepare Texture
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, info.textureId);
+
+            //Calculate Vertex-Data
+            float[] vertices = {
+                    //Triangle 1
+                    info.x,                 info.y,                 info.u1, info.v1,
+                    info.x,                 info.y + info.height,   info.u1, info.v2,
+                    info.x + info.width,    info.y + info.height,   info.u2, info.v2,
+
+                    //Triangle 2
+                    info.x,                 info.y,                 info.u1, info.v1,
+                    info.x + info.width,    info.y + info.height,   info.u2, info.v2,
+                    info.x + info.width,    info.y,                 info.u2, info.v1
+            };
+
+            //Update vertex data
+            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, createFloatBuffer(vertices));
+
+            //Draw
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
+        }
+
+        GL20.glDisableVertexAttribArray(0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL30.glBindVertexArray(0);
 
         shader.stop();
+    }
+
+    /**
+     * Flushes all queued elements.
+     */
+    public void flush() {
+        batchQueue.clear();
+    }
+
+    /**
+     * @return The amount of currently queued elements
+     */
+    public int queueSize() {
+        return this.batchQueue.size();
     }
 
     /**

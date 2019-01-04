@@ -96,7 +96,7 @@ public class GrapeFont {
             charData.limit(position + 95);
             charData.position(position);
 
-            STBTruetype.stbtt_PackSetOversampling(packContext, 2, 2);
+            STBTruetype.stbtt_PackSetOversampling(packContext, 1, 1);
             STBTruetype.stbtt_PackFontRange(packContext, trueTypeFont, 0, fontSize * 2, 32, charData); // <== 200 ==> FontSize
             //End of loop
 
@@ -106,8 +106,8 @@ public class GrapeFont {
             //Create font image
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTexture);
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RED, BITMAP_WIDTH, BITMAP_HEIGHT, 0, GL11.GL_RED, GL11.GL_UNSIGNED_BYTE, bitmapBuffer);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -139,25 +139,24 @@ public class GrapeFont {
             STBTruetype.stbtt_GetPackedQuad(charData, BITMAP_WIDTH, BITMAP_HEIGHT, text.charAt(i), xBuffer, yBuffer,
                     quad, false); //false?
 
-            int yOffset = fontMetrics.getAscent();
+            int yOffset = fontMetrics.getDescent();
+
+            float width  = quad.x1() - quad.x0();
+            float height = quad.x1() - quad.x0();
 
             float[] vertices = {
                     //Triangle 1
-                    (quad.x0() / 2), (quad.y0() / 2) + yOffset, quad.s0(), quad.t0(),
-                    (quad.x0() / 2), (quad.y1() / 2) + yOffset, quad.s0(), quad.t1(),
-                    (quad.x1() / 2), (quad.y1() / 2) + yOffset, quad.s1(), quad.t1(),
+                    x, y, quad.s0(), quad.t0(),
+                    x, y + height, quad.s0(), quad.t1(),
+                    x + width, y + height, quad.s1(), quad.t1(),
 
                     //Triangle 2
-                    (quad.x0() / 2), (quad.y0() / 2) + yOffset, quad.s0(), quad.t0(),
-                    (quad.x1() / 2), (quad.y1() / 2) + yOffset, quad.s1(), quad.t1(),
-                    (quad.x1() / 2), (quad.y0() / 2) + yOffset, quad.s1(), quad.t0()
-
+                    x, y, quad.s0(), quad.t0(),
+                    x + width, y + height, quad.s1(), quad.t1(),
+                    x + width, y, quad.s1(), quad.t0()
             };
 
-            System.out.println("height: " + fontMetrics.getHeight());
-            System.out.println("descend: " + fontMetrics.getDescent());
-            System.out.println("ascend: " + fontMetrics.getAscent());
-            System.out.println("y: " + quad.y0());
+            x += width;
 
             //Update vertex data
             GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
@@ -173,6 +172,8 @@ public class GrapeFont {
         }
 
         shader.stop();
+
+        Graphics.fillRectangle(x, y, 512, 2, Color.RED, projectionAndOrViewMatrix);
 
         GL30.glBindVertexArray(0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
