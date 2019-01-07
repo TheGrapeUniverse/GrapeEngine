@@ -7,6 +7,6 @@ out vec2 pass_textureCoord;
 
 void main()
 {
-    gl_Position = projectionMatrix * vec4(vertex.xy, 0.0f, 1.0f);
+    gl_Position = projectionMatrix * vec4(vertex.x / 2, vertex.y / 2, 0.0f, 1.0f);
     pass_textureCoord = vertex.zw;
 }

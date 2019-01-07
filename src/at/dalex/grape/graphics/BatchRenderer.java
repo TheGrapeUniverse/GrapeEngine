@@ -55,11 +55,11 @@ public class BatchRenderer {
         queueRender(textureId, x, y, width, height, 0, 0, 1, 1);
     }
 
-    public void queueRender(Image image, int x, int y, int width, int height, int u1, int v1, int v2, int u2) {
+    public void queueRender(Image image, int x, int y, int width, int height, float u1, float v1, float v2, float u2) {
         queueRender(image.getTextureId(), x, y, width, height, u1, v1, u2, v2);
     }
 
-    public void queueRender(int textureId, int x, int y, int width, int height, int u1, int v1, int v2, int u2) {
+    public void queueRender(int textureId, int x, int y, int width, int height, float u1, float v1, float v2, float u2) {
         batchQueue.add(new BatchInfo(textureId, x, y, width, height, u1, v1, u2, v2));
     }
 
@@ -97,6 +97,7 @@ public class BatchRenderer {
 
             //Draw
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
+            MemoryManager.drawCallsAmount++;
         }
 
         GL20.glDisableVertexAttribArray(0);
@@ -135,7 +136,7 @@ public class BatchRenderer {
         public int height;
         public float u1, v1, u2, v2;
 
-        BatchInfo(int textureId, int x, int y, int width, int height, int u1, int v1, int u2, int v2) {
+        BatchInfo(int textureId, int x, int y, int width, int height, float u1, float v1, float u2, float v2) {
             this.textureId = textureId;
             this.x = x;
             this.y = y;

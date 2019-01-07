@@ -1,12 +1,12 @@
 package at.dalex.grape.graphics.font;
 
+import at.dalex.grape.GrapeEngine;
+import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;
-import at.dalex.grape.graphics.shader.FontShader;
+import org.joml.Matrix4f;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,8 @@ public class BitmapFont {
     private final Map<Character, Glyph> glyphs;
     private Image texture;
     private int fontHeight;
+
+    private BatchRenderer renderer = new BatchRenderer();
 
     public BitmapFont() {
         this(new Font(Font.MONOSPACED, PLAIN, 16), true);
@@ -93,12 +95,6 @@ public class BitmapFont {
             glyphs.put(character, glyph);
         }
 
-        //Flip image horizontal to get the origin to bottom left
-        AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
-        transform.translate(0, -image.getHeight());
-        AffineTransformOp operation = new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        image = operation.filter(image, null);
-
         return ImageUtils.convertBufferedImage(image);
     }
 
@@ -168,13 +164,40 @@ public class BitmapFont {
         return height;
     }
 
-    public void drawText(String text, int x, int y) {
+    public void drawText(String text, int x, int y, Matrix4f projectionAndViewMatrix) {
         int textHeight = getHeight(text);
 
         int drawX = x;
         int drawY = y;
         if (textHeight > fontHeight) drawY += textHeight - fontHeight;
 
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (ch == '\n') {
+                /* Line feed, set x and y to draw at the next line */
+                drawY += fontHeight;
+                drawX = x;
+                continue;
+            }
+            if (ch == '\r') {
+                /* Carriage return, just skip it */
+                continue;
+            }
+            Glyph g = glyphs.get(ch);
 
+            float normalizedWidth = 1.0f / texture.getWidth();
+            float normalizedHeight = 1.0f / texture.getHeight();
+            float u1 = g.x * normalizedWidth;
+            float v1 = g.y * normalizedHeight;
+            float u2 = u1 + g.width * normalizedWidth;
+            float v2 = v1 + g.height * normalizedHeight;
+
+            renderer.queueRender(texture, drawX, drawY, g.width, g.height, u1, v1, u2, v2);
+
+            drawX += g.width;
+        }
+
+        renderer.drawQueue(projectionAndViewMatrix);
+        renderer.flush();
     }
 }

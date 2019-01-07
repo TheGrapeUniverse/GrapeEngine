@@ -2,6 +2,7 @@ package at.dalex.grape.map;
 
 import java.util.ArrayList;
 
+import at.dalex.grape.graphics.BatchRenderer;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.graphics.Tileset;
@@ -30,7 +31,7 @@ public class MapLayer {
 		}
 	}
 
-	public void draw(int dx, int dy, float scale, Matrix4f projectionAndViewMatrix) {
+	public void draw(BatchRenderer renderer, int dx, int dy, float scale, Matrix4f projectionAndViewMatrix) {
 		int windowWidth = DisplayManager.windowWidth;
 		int windowHeight = DisplayManager.windowHeight;
 		int tileSize = tileset.getTileSize();
@@ -45,12 +46,12 @@ public class MapLayer {
 
 					int tileId = tiles.get(y).get(x).getId();
 					if (tileId > -1) {
-						Graphics.drawImage(tileset.getTileList().get(tileId),
-								xPos, 
-								yPos, 
-								(int) (tileSize * scale), 
+
+						renderer.queueRender(tileset.getTileList().get(tileId),
+								xPos,
+								yPos,
 								(int) (tileSize * scale),
-								projectionAndViewMatrix);
+								(int) (tileSize * scale));
 					}
 				}
 			}

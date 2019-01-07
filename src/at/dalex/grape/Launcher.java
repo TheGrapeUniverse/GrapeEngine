@@ -21,7 +21,7 @@ public class Launcher extends GrapeEngine {
 
 	@Override
 	public void onEnable() {
-		playState = new IntroState();
+		playState = new PlayState();
 		GrapeEngine.getEngine().getGameStateManager().addGameState(playState);
 		GrapeEngine.getEngine().getGameStateManager().setState(playState.getId());
 	}

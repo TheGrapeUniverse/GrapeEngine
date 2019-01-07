@@ -1,5 +1,6 @@
 package at.dalex.grape.script;
 
+import at.dalex.grape.graphics.Camera;
 import org.joml.Vector3f;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -7,6 +8,7 @@ import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 import at.dalex.grape.GrapeEngine;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 class LuaCamera {
 
@@ -43,6 +45,20 @@ class LuaCamera {
 			Vector3f translation = new Vector3f((float) x, (float) y, (float) z);
 			GrapeEngine.getEngine().getCamera().translate(translation);
 			return NIL;
+		}
+	}
+
+	public static class LuaGetProjectionMatrix extends ZeroArgFunction {
+		@Override
+		public LuaValue call() {
+			return CoerceJavaToLua.coerce(GrapeEngine.getEngine().getCamera().getProjectionMatrix());
+		}
+	}
+
+	public static class LuaGetProjectionAndViewMatrix extends ZeroArgFunction {
+		@Override
+		public LuaValue call() {
+			return CoerceJavaToLua.coerce(GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
 		}
 	}
 }

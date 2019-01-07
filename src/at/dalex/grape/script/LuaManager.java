@@ -77,6 +77,8 @@ public class LuaManager {
 		cameraTable.set("getPosition", new LuaCamera.LuaGetPosition());
 		cameraTable.set("setPosition", new LuaCamera.LuaSetPosition());
 		cameraTable.set("translate", new LuaCamera.LuaTranslate());
+		cameraTable.set("getProjectionMatrix", new LuaCamera.LuaGetProjectionMatrix());
+		cameraTable.set("getProjectionAndViewMatrix", new LuaCamera.LuaGetProjectionAndViewMatrix());
 		cameraTable.set("__index", cameraTable);
 		camera.setmetatable(cameraTable);
 

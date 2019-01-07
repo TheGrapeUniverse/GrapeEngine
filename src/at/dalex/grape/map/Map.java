@@ -3,6 +3,7 @@ package at.dalex.grape.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.dalex.grape.graphics.BatchRenderer;
 import org.joml.Matrix4f;
 
 public class Map {
@@ -15,6 +16,8 @@ public class Map {
 	private int y;
 	
 	private float scale_factor = 1f;
+
+	private BatchRenderer tileRenderer = new BatchRenderer();
 	
 	public Map(int width, int height, int layerAmount) {
 		this.width = width;
@@ -68,7 +71,9 @@ public class Map {
 	
 	public void draw(Matrix4f projectionAndViewMatrix) {
 		for (MapLayer layer : layers) {
-			layer.draw(x, y, scale_factor, projectionAndViewMatrix);
+			layer.draw(tileRenderer, x, y, scale_factor, projectionAndViewMatrix);
 		}
+
+		tileRenderer.drawQueue(projectionAndViewMatrix);
 	}
 }

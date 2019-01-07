@@ -56,7 +56,6 @@ public abstract class ShaderProgram {
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderCode);
         glCompileShader(shaderID);
-        System.out.println("Shader log: " + glGetShaderInfoLog(shaderID));
         return shaderID;
     }
 
