@@ -3,6 +3,7 @@ package at.dalex.grape.graphics;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.toolbox.MemoryManager;
+import com.sun.prism.impl.BufferUtil;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
@@ -18,6 +19,7 @@ public class BatchRenderer {
     private int vaoId;
     private int vboId;
     private FloatBuffer matrixBuffer;
+    private FloatBuffer vertexBufffer;
 
     public BatchRenderer() {
         vaoId = GL30.glGenVertexArrays();
@@ -38,6 +40,7 @@ public class BatchRenderer {
 
         /* Create FloatBuffer for projection-matrix */
         matrixBuffer = BufferUtils.createFloatBuffer(16);
+        vertexBufffer = BufferUtils.createFloatBuffer(24);
     }
 
     private FloatBuffer createFloatBuffer(float[] data) {
@@ -93,7 +96,9 @@ public class BatchRenderer {
             };
 
             //Update vertex data
-            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, createFloatBuffer(vertices));
+            vertexBufffer.put(vertices);
+            vertexBufffer.position(0);
+            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, vertexBufffer);
 
             //Draw
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);

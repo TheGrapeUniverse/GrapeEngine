@@ -75,5 +75,6 @@ public class Map {
 		}
 
 		tileRenderer.drawQueue(projectionAndViewMatrix);
+		tileRenderer.flush();
 	}
 }
