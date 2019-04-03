@@ -2,7 +2,6 @@ package at.dalex.grape.graphics.graphicsutil;
 
 import java.awt.Color;
 
-import at.dalex.grape.graphics.font.GrapeFont;
 import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

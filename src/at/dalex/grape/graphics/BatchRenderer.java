@@ -3,7 +3,6 @@ package at.dalex.grape.graphics;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.toolbox.MemoryManager;
-import com.sun.prism.impl.BufferUtil;
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
@@ -78,10 +77,10 @@ public class BatchRenderer {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
         GL20.glEnableVertexAttribArray(0);
 
-        for (BatchInfo info : batchQueue) {
-            //Prepare Texture
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, info.textureId);
+        //Prepare Texture
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, batchQueue.get(0).textureId);
 
+        for (BatchInfo info : batchQueue) {
             //Calculate Vertex-Data
             float[] vertices = {
                     //Triangle 1

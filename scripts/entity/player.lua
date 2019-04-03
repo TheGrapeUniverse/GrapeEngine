@@ -19,13 +19,16 @@ function update()
 	if (Keyboard.isKeyDown("W")) then
 		instance:setY(instance:getY() - (walkSpeed * delta));
 		moving = true;
-	elseif (Keyboard.isKeyDown("S")) then
+	end
+	if (Keyboard.isKeyDown("S")) then
 		instance:setY(instance:getY() + (walkSpeed * delta));
 		moving = true;
-	elseif (Keyboard.isKeyDown("A")) then
+	end
+	if (Keyboard.isKeyDown("A")) then
 		instance:setX(instance:getX() - (walkSpeed * delta));
 		moving = true;
-	elseif (Keyboard.isKeyDown("D")) then
+	end
+	if (Keyboard.isKeyDown("D")) then
 		instance:setX(instance:getX() + (walkSpeed * delta));
 		moving = true;
 	else

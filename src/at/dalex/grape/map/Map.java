@@ -68,13 +68,15 @@ public class Map {
 	public void update() {
 		
 	}
-	
-	public void draw(Matrix4f projectionAndViewMatrix) {
+
+	public void prepareRender(Matrix4f projectionAndViewMatrix) {
+		tileRenderer.flush();
 		for (MapLayer layer : layers) {
 			layer.draw(tileRenderer, x, y, scale_factor, projectionAndViewMatrix);
 		}
-
+	}
+	
+	public void draw(Matrix4f projectionAndViewMatrix) {
 		tileRenderer.drawQueue(projectionAndViewMatrix);
-		tileRenderer.flush();
 	}
 }

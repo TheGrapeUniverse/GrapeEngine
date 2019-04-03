@@ -57,7 +57,7 @@ public class DisplayManager {
 
 		//Change resolution to display's, when fullscreen is set in GameInfo.txt
 		if (GrapeEngine.getEngine().getGameInfo().getValue("fullscreen").equalsIgnoreCase("true")) {
-			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 			windowWidth = (int) screenSize.getWidth();
 			windowHeight = (int) screenSize.getHeight();
 		}
