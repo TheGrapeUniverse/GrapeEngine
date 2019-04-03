@@ -17,11 +17,12 @@ public class Map {
 	
 	private float scale_factor = 1f;
 
-	private BatchRenderer tileRenderer = new BatchRenderer();
+	private BatchRenderer tileRenderer;
 	
-	public Map(int width, int height, int layerAmount) {
+	public Map(int width, int height, int layerAmount, int textureAtlasId) {
 		this.width = width;
 		this.height = height;
+		this.tileRenderer = new BatchRenderer(textureAtlasId);
 	}
 	
 	public int getWidth() {
@@ -70,9 +71,8 @@ public class Map {
 	}
 	
 	public void draw(Matrix4f projectionAndViewMatrix) {
-		for (MapLayer layer : layers) {
+		for (MapLayer layer : layers)
 			layer.draw(tileRenderer, x, y, scale_factor, projectionAndViewMatrix);
-		}
 
 		tileRenderer.drawQueue(projectionAndViewMatrix);
 		tileRenderer.flush();

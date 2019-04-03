@@ -43,16 +43,9 @@ public class MapLayer {
 				
 				//To increase performance, only render what is visible
 				if (xPos < windowWidth && yPos < windowHeight && xPos > -tileSize * scale && yPos > -tileSize * scale) {
-
 					int tileId = tiles.get(y).get(x).getId();
-					if (tileId > -1) {
-
-						renderer.queueRender(tileset.getTileList().get(tileId),
-								xPos,
-								yPos,
-								(int) (tileSize * scale),
-								(int) (tileSize * scale));
-					}
+					if (tileId > -1)
+						renderer.queueRender(xPos, yPos, (int) (tileSize * scale), (int) (tileSize * scale));
 				}
 			}
 		}

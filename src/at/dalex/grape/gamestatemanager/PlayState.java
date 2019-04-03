@@ -1,7 +1,11 @@
 package at.dalex.grape.gamestatemanager;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import at.dalex.grape.graphics.BatchRenderer;
+import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
@@ -16,11 +20,16 @@ public class PlayState extends GameState {
 	public static Map current_map;
 	public static ArrayList<Entity> entities = new ArrayList<>();
 
+	private BatchRenderer renderer;
+
 	@Override
 	public void init() {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
+		Image image = ImageUtils.loadImage(new File("textures/base.png"));
+		renderer = new BatchRenderer(image);
+		renderer.queueRender(80, 80, 64, 64, 0.0f, 0.0f, 1.0f, 1.0f);
 	}
 
 	@Override
@@ -28,9 +37,10 @@ public class PlayState extends GameState {
 		Graphics.enableBlending(true);
 		if (current_map != null)
 			current_map.draw(projectionAndViewMatrix);
-		
+
 		luaManager.callDraw();
-		
+		renderer.drawQueue(projectionAndViewMatrix);
+
 		for (Entity entity : entities) {
 			entity.draw(projectionAndViewMatrix);
 		}
@@ -42,7 +52,7 @@ public class PlayState extends GameState {
 	public void update(double delta) {
 		if (current_map != null)
 			current_map.update();
-		
+
 		luaManager.callUpdate();
 		
 		for (Entity entity : entities) {
