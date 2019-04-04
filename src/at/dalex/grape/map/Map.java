@@ -71,10 +71,10 @@ public class Map {
 	}
 	
 	public void draw(Matrix4f projectionAndViewMatrix) {
-		for (MapLayer layer : layers)
+		for (MapLayer layer : layers) {
 			layer.draw(tileRenderer, x, y, scale_factor, projectionAndViewMatrix);
-
-		tileRenderer.drawQueue(projectionAndViewMatrix);
-		tileRenderer.flush();
+			tileRenderer.drawQueue(projectionAndViewMatrix);
+			tileRenderer.flush();
+		}
 	}
 }

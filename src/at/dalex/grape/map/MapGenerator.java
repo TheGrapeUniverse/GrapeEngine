@@ -14,10 +14,10 @@ public class MapGenerator {
 	
 	private static PerlinNoise perlinNoiseGenerator;
 	
-	public static Map generateFromPerlinNoise(Image textureAtlas, int width, int height, int seed) {
+	public static Map generateFromPerlinNoise(int width, int height, int seed) {
 		perlinNoiseGenerator = new PerlinNoise(seed);
 		Tileset tileset = new Tileset(ImageUtils.loadBufferedImage("textures/base.png"), 16);
-		Map map = new Map(width, height, 1, textureAtlas.getTextureId());
+		Map map = new Map(width, height, 1, tileset.getRawTextureImage().getTextureId());
 		MapLayer layer = new MapLayer(width, height, tileset);
 		
 		float[][] values = perlinNoiseGenerator.generatePerlinNoise(width, height, 6);

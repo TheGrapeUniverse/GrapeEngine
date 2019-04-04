@@ -3,6 +3,8 @@ package at.dalex.grape.map;
 import java.util.ArrayList;
 
 import at.dalex.grape.graphics.BatchRenderer;
+import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.graphics.Tileset;
@@ -11,19 +13,26 @@ import at.dalex.grape.graphics.graphicsutil.Graphics;
 
 public class MapLayer {
 
-	private ArrayList<ArrayList<Tile>> tiles = new ArrayList<ArrayList<Tile>>();
+	private ArrayList<ArrayList<Tile>> tiles = new ArrayList<>();
 	private int width;
 	private int height;
 	private Tileset tileset;
+	private TextureAtlas atlas;
 
 	public MapLayer(int width, int height, Tileset tileset) {
 		this.width = width;
 		this.height = height;
 		this.tileset = tileset;
+		Image atlasImage = tileset.getRawTextureImage();
+
+		int atlasWidth = atlasImage.getWidth();
+		int atlasHeight = atlasImage.getHeight();
+		int tileSize = tileset.getTileSize();
+		this.atlas = new TextureAtlas(atlasImage.getTextureId(), atlasWidth, atlasHeight, atlasWidth / tileSize, atlasHeight / tileSize);
 
 		//Fill layer with empty tiles
 		for (int y = 0; y < height; y++) {
-			ArrayList<Tile> list = new ArrayList<Tile>();
+			ArrayList<Tile> list = new ArrayList<>();
 			for (int x = 0; x < width; x++) {
 				list.add(new Tile(-1, false, false));
 			}
@@ -44,8 +53,17 @@ public class MapLayer {
 				//To increase performance, only render what is visible
 				if (xPos < windowWidth && yPos < windowHeight && xPos > -tileSize * scale && yPos > -tileSize * scale) {
 					int tileId = tiles.get(y).get(x).getId();
-					if (tileId > -1)
-						renderer.queueRender(xPos, yPos, (int) (tileSize * scale), (int) (tileSize * scale));
+					float[] rectangleUVs = new float[] { 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0 };
+					if (tileId > -1) {
+
+						rectangleUVs = atlas.recalculateUVCoordinates(rectangleUVs, tileId);
+						System.out.println();
+
+						renderer.queueRender(
+								xPos, yPos,
+								(int) (tileSize * scale), (int) (tileSize * scale),
+								rectangleUVs);
+					}
 				}
 			}
 		}

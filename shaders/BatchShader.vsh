@@ -12,6 +12,6 @@ out vec2 pass_textureCoord;
 
 void main()
 {
-    gl_Position = viewMatrix * transformationMatrix * vec4(vertex.x / 2, vertex.y / 2, 0.0f, 1.0f);
-    pass_textureCoord = uvCoordinates;
+    gl_Position = viewMatrix * transformationMatrix * vec4(vertex.x, vertex.y, 0.0f, 1.0f);
+	pass_textureCoord = uvCoordinates;
 }

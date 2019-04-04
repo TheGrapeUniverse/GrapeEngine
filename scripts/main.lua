@@ -4,7 +4,7 @@ entities = {
 }
 
 function init()
-	Map.changeMap("maps/simpleMap.tmx", "textures/base.png", 16);
+	Map.changeMap("maps/simpleMap.tmx", "textures/tileset.png", 16);
 
   	entities.player = Entity.create(0, 10, LivingType.NEUTRAL, 200, "scripts/entity/player.lua");
 end

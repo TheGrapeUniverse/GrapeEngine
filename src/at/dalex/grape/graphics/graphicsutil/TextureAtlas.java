@@ -2,8 +2,9 @@ package at.dalex.grape.graphics.graphicsutil;
 
 public class TextureAtlas extends Image {
 
-    private int numberOfRows = 1;
-    private int cellSize;
+    private int numberOfRows;
+    private int numberOfColumns;
+    private int[] cellSize;
 
     /**
      * Creates a new TextureAtlas instance.
@@ -20,23 +21,39 @@ public class TextureAtlas extends Image {
      * @param atlasWidth The width of the atlas source image
      * @param numberOfRows The number of separate images contained in one row
      */
-    public TextureAtlas(int textureId, int atlasWidth, int numberOfRows ) {
-        super(textureId, atlasWidth, atlasWidth);
+    public TextureAtlas(int textureId, int atlasWidth, int atlasHeight, int numberOfRows, int numberOfColumns) {
+        super(textureId, atlasWidth, atlasHeight);
 
         this.numberOfRows = numberOfRows;
-        this.cellSize = atlasWidth / numberOfRows;
+        this.numberOfColumns = numberOfColumns;
+        this.cellSize = new int[] { atlasWidth / numberOfRows, atlasHeight / numberOfColumns };
     }
 
     public float[] recalculateUVCoordinates(float[] uvs, int cellId) {
-        int cellX = cellId % numberOfRows;
-        int cellY = cellId / numberOfRows;
+        int yOffset = cellId / numberOfRows;
+        int xOffset = cellId - (yOffset * numberOfRows);
 
+        float normalizedCellWidth = 1.0f / numberOfColumns;
+        float normalizedCellHeight = 1.0f / numberOfRows;
+
+        //Normalize all UVs
         for (int i = 0; i < uvs.length; i++) {
-            uvs[i] /= numberOfRows;
             if (i % 2 == 0) {
-                uvs[i] += cellX;
+                uvs[i] /= numberOfColumns;
             }
-            else uvs[i] += cellY;
+            else {
+                uvs[i] /=  numberOfRows;
+            }
+        }
+
+        //Offset
+        for (int i = 0; i < uvs.length; i++) {
+            if (i % 2 == 0) {
+                uvs[i] += xOffset * normalizedCellWidth;
+            }
+            else {
+                uvs[i] += yOffset * normalizedCellHeight;
+            }
         }
 
         return uvs;
@@ -46,7 +63,7 @@ public class TextureAtlas extends Image {
         return this.numberOfRows;
     }
 
-    public int getCellSize() {
+    public int[] getCellSize() {
         return this.cellSize;
     }
 }

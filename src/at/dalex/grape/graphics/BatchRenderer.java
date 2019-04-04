@@ -171,8 +171,8 @@ public class BatchRenderer {
             storeMatrixInFloat(projection, instanceVBOData);
             storeMatrixInFloat(currentBatch.transformationMatrix, instanceVBOData);
             /* Update UVs */
-            for (int j = 0; j < currentBatch.uvs.length; j++)
-                uvs[(i * 12) + j] = currentBatch.uvs[j];
+            System.arraycopy(currentBatch.uvs, 0, uvs, (i * 12), 12);
+
         }
         updateInstanceVBO(instanceVBOId, instanceVBOData, instanceBuffer);  //Update Instance VBO
         updateVBO(texVBOId, uvs, BufferUtils.createFloatBuffer(uvs.length), GL15.GL_DYNAMIC_DRAW); //Update UV-VBO
@@ -193,7 +193,15 @@ public class BatchRenderer {
     }
 
     public void queueRender(int x, int y, int width, int height, float u1, float v1, float v2, float u2) {
-        batchQueue.add(new BatchInfo(x, y, width, height, u1, v1, u2, v2));
+        float[] uvs = {
+                u1, v1,
+                u1, v2,
+                u2, v2,
+                u1, v1,
+                u2, v2,
+                u2, v1,
+        };
+        batchQueue.add(new BatchInfo(x, y, width, height, uvs));
     }
 
     public void queueRender(int x, int y, int width, int height, float[] uvs) {
@@ -225,12 +233,11 @@ public class BatchRenderer {
         public Matrix4f transformationMatrix;
         public float[] uvs;
 
-        BatchInfo(int x, int y, int width, int height, float... uvs) {
+        BatchInfo(int x, int y, int width, int height, float[] uvs) {
             Vector3f translation = new Vector3f(x, y, 0);
             transformationMatrix = Toolbox.createTransformationMatrix(translation, 0.0f, 0.0f, 0.0f, 1.0f);
             transformationMatrix = transformationMatrix.scale((float) width, (float) height, 1.0f);
             this.uvs = uvs;
-            System.out.println("len: " + uvs.length);
         }
     }
 }

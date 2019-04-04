@@ -183,8 +183,8 @@ public class BitmapFont {
                 /* Carriage return, just skip it */
                 continue;
             }
-            Glyph g = glyphs.get(ch);
 
+            Glyph g = glyphs.get(ch);
             float normalizedWidth = 1.0f / texture.getWidth();
             float normalizedHeight = 1.0f / texture.getHeight();
             float u1 = g.x * normalizedWidth;
@@ -193,7 +193,6 @@ public class BitmapFont {
             float v2 = v1 + g.height * normalizedHeight;
 
             renderer.queueRender(drawX, drawY, g.width, g.height, u1, v1, u2, v2);
-
             drawX += g.width;
         }
 
