@@ -2,6 +2,7 @@ package at.dalex.grape.graphics;
 
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.shader.BatchShader;
+import at.dalex.grape.info.Logger;
 import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
@@ -9,6 +10,8 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
+import javax.tools.Tool;
+import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -28,7 +31,7 @@ public class BatchRenderer {
     private int instanceDataPos = 0;
 
     //Maximum amount of instances to be drawn at once
-    private final int MAX_INSTANCES = 10000;
+    private final int MAX_INSTANCES = 100000;
 
     // 4 for viewMat, 4 for transformMat, 4 for UVs
     // (Matrices = 4 float per row and column)
@@ -58,7 +61,7 @@ public class BatchRenderer {
         /* Create FloatBuffers */
         projectionMatrixBuffer = createFloatBuffer(16);
         vertexBuffer = createFloatBuffer(24);
-        uvBuffer = createFloatBuffer(4 * 2); //2 UVs for each vertex = 8 floats
+        uvBuffer = createFloatBuffer(6 * 2); //2 UVs for each vertex = 12 floats
         instanceBuffer = createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 
         //Create VBO used for instanced rendering
@@ -111,13 +114,17 @@ public class BatchRenderer {
     }
 
     private void updateVBO(int vboId, float[] data, FloatBuffer buffer, int usage) {
-        buffer.clear();
-        buffer.put(data);
-        buffer.flip();
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer.capacity() * 4, usage);
-        GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, buffer);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        try {
+            buffer.clear();
+            buffer.put(data);
+            buffer.flip();
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer.capacity() * 4, usage);
+            GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, buffer);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        } catch (BufferOverflowException e) {
+            Logger.error("BatchRenderer query size cannot exceed " + MAX_INSTANCES + " entries!");
+        }
     }
 
     private void updateInstanceVBO(int vboId, float[] data, FloatBuffer buffer) {
@@ -135,22 +142,9 @@ public class BatchRenderer {
     }
 
     private void storeMatrixInFloat(Matrix4f matrix, float[] vboData) {
-        vboData[instanceDataPos++] = matrix.m00();
-        vboData[instanceDataPos++] = matrix.m01();
-        vboData[instanceDataPos++] = matrix.m02();
-        vboData[instanceDataPos++] = matrix.m03();
-        vboData[instanceDataPos++] = matrix.m10();
-        vboData[instanceDataPos++] = matrix.m11();
-        vboData[instanceDataPos++] = matrix.m12();
-        vboData[instanceDataPos++] = matrix.m13();
-        vboData[instanceDataPos++] = matrix.m20();
-        vboData[instanceDataPos++] = matrix.m21();
-        vboData[instanceDataPos++] = matrix.m22();
-        vboData[instanceDataPos++] = matrix.m23();
-        vboData[instanceDataPos++] = matrix.m30();
-        vboData[instanceDataPos++] = matrix.m31();
-        vboData[instanceDataPos++] = matrix.m32();
-        vboData[instanceDataPos++] = matrix.m33();
+        float[] data = Toolbox.convertMatrixToArray(matrix);
+        System.arraycopy(data, 0, vboData, instanceDataPos, data.length);
+        instanceDataPos += data.length;
     }
 
     public void drawQueue(Matrix4f projection) {
@@ -168,7 +162,7 @@ public class BatchRenderer {
 
         //Update the vbo
         float[] instanceVBOData = new float[batchQueue.size() * INSTANCE_DATA_LENGTH];
-        float[] uvs = new float[batchQueue.size() * 8];
+        float[] uvs = new float[batchQueue.size() * 12];
 
         instanceDataPos = 0;
         for (int i = 0; i < batchQueue.size(); i++) {
@@ -177,14 +171,8 @@ public class BatchRenderer {
             storeMatrixInFloat(projection, instanceVBOData);
             storeMatrixInFloat(currentBatch.transformationMatrix, instanceVBOData);
             /* Update UVs */
-            uvs[i + 0]  = 0;   //UV1
-            uvs[i + 1]  = 0;
-            uvs[i + 2]  = 0;   //UV2
-            uvs[i + 3]  = 0;
-            uvs[i + 4]  = 1;   //UV3
-            uvs[i + 5]  = 1;
-            uvs[i + 6]  = 0;   //UV4
-            uvs[i + 7]  = 1;
+            for (int j = 0; j < currentBatch.uvs.length; j++)
+                uvs[(i * 12) + j] = currentBatch.uvs[j];
         }
         updateInstanceVBO(instanceVBOId, instanceVBOData, instanceBuffer);  //Update Instance VBO
         updateVBO(texVBOId, uvs, BufferUtils.createFloatBuffer(uvs.length), GL15.GL_DYNAMIC_DRAW); //Update UV-VBO
@@ -206,6 +194,10 @@ public class BatchRenderer {
 
     public void queueRender(int x, int y, int width, int height, float u1, float v1, float v2, float u2) {
         batchQueue.add(new BatchInfo(x, y, width, height, u1, v1, u2, v2));
+    }
+
+    public void queueRender(int x, int y, int width, int height, float[] uvs) {
+        batchQueue.add(new BatchInfo(x, y, width, height, uvs));
     }
 
     /**
@@ -231,16 +223,14 @@ public class BatchRenderer {
     class BatchInfo {
 
         public Matrix4f transformationMatrix;
-        public float u1, v1, u2, v2;
+        public float[] uvs;
 
-        BatchInfo(int x, int y, int width, int height, float u1, float v1, float u2, float v2) {
+        BatchInfo(int x, int y, int width, int height, float... uvs) {
             Vector3f translation = new Vector3f(x, y, 0);
             transformationMatrix = Toolbox.createTransformationMatrix(translation, 0.0f, 0.0f, 0.0f, 1.0f);
             transformationMatrix = transformationMatrix.scale((float) width, (float) height, 1.0f);
-            this.u1 = u1;
-            this.v1 = v1;
-            this.u2 = u2;
-            this.v2 = v2;
+            this.uvs = uvs;
+            System.out.println("len: " + uvs.length);
         }
     }
 }

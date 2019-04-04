@@ -2,10 +2,12 @@ package at.dalex.grape.gamestatemanager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
@@ -27,22 +29,29 @@ public class PlayState extends GameState {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
+
 		Image image = ImageUtils.loadImage(new File("textures/base.png"));
-		renderer = new BatchRenderer(image);
-		renderer.queueRender(80, 80, 64, 64, 0.0f, 0.0f, 1.0f, 1.0f);
+		TextureAtlas atlas = new TextureAtlas(image.getTextureId(), image.getWidth(), 2);
+		renderer = new BatchRenderer(image.getTextureId());
+
+		float[] uvs = new float[] { 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0 };
+		uvs = atlas.recalculateUVCoordinates(uvs, 1);
+
+		renderer.queueRender(80, 80, 128, 128, uvs);
 	}
 
 	@Override
 	public void draw(Matrix4f projectionAndViewMatrix) {
 		Graphics.enableBlending(true);
 		if (current_map != null)
-			current_map.draw(projectionAndViewMatrix);
+			//current_map.draw(projectionAndViewMatrix);
 
-		luaManager.callDraw();
+		//luaManager.callDraw();
+
 		renderer.drawQueue(projectionAndViewMatrix);
 
 		for (Entity entity : entities) {
-			entity.draw(projectionAndViewMatrix);
+			//entity.draw(projectionAndViewMatrix);
 		}
 
 		Graphics.enableBlending(false);
@@ -54,7 +63,7 @@ public class PlayState extends GameState {
 			current_map.update();
 
 		luaManager.callUpdate();
-		
+
 		for (Entity entity : entities) {
 			entity.update(delta);
 		}
