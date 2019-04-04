@@ -87,6 +87,7 @@ public abstract class GrapeEngine implements DisplayCallback {
 		gameStateManager.draw(camera.getProjectionAndViewMatrix());
 
 		Graphics.enableBlending(true);
+
 		debugFont.drawText("GrapeEngine", 0, 0, camera.getProjectionAndViewMatrix());
 		debugFont.drawText("Version 0.8", 0, 12, camera.getProjectionAndViewMatrix());
 		debugFont.drawText("Using Lua Integration [BETA]", 0, 36, camera.getProjectionAndViewMatrix());

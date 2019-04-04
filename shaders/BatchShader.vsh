@@ -1,12 +1,17 @@
 #version 330
 
-uniform mat4 projectionMatrix;
+//Per vertex variables
+in vec2 vertex;
+in vec2 uvCoordinates;
 
-layout (location = 0) in vec4 vertex; //vec2 position, vec2 texCoord
+//Instanced variables
+in mat4 viewMatrix;
+in mat4 transformationMatrix;
+
 out vec2 pass_textureCoord;
 
 void main()
 {
-    gl_Position = projectionMatrix * vec4(vertex.x / 2, vertex.y / 2, 0.0f, 1.0f);
-    pass_textureCoord = vertex.zw;
+    gl_Position = viewMatrix * transformationMatrix * vec4(vertex.x / 2, vertex.y / 2, 0.0f, 1.0f);
+    pass_textureCoord = uvCoordinates;
 }

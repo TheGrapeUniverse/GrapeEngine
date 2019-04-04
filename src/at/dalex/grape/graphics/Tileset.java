@@ -17,14 +17,16 @@ import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 public class Tileset {
 
     private BufferedImage rawImage;
+    private Image tilesetImage;
     private Image[][] tileArray;
     private ArrayList<Image> tileList;
     private int tileSize;
 
     public Tileset(BufferedImage rawImage, int tileSize) {
         this.tileSize = tileSize;
-        tileList = new ArrayList<Image>();
+        this.tilesetImage = ImageUtils.convertBufferedImage(rawImage);
 
+        tileList = new ArrayList<>();
         Image[][] ret;
         try {
             //Convert source image to texture
@@ -61,6 +63,10 @@ public class Tileset {
 
     public BufferedImage getRawImage() {
         return this.rawImage;
+    }
+
+    public Image getTilesetImage() {
+        return this.tilesetImage;
     }
 
     public Image[][] getTileArray() {

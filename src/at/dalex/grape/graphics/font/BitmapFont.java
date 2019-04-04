@@ -21,8 +21,7 @@ public class BitmapFont {
     private final Map<Character, Glyph> glyphs;
     private Image texture;
     private int fontHeight;
-
-    private BatchRenderer renderer = new BatchRenderer();
+    private BatchRenderer renderer;
 
     public BitmapFont() {
         this(new Font(Font.MONOSPACED, PLAIN, 16), true);
@@ -51,6 +50,7 @@ public class BitmapFont {
     public BitmapFont(Font font, boolean antiAlias) {
         glyphs = new HashMap<>();
         texture = createFontTexture(font, antiAlias);
+        renderer = new BatchRenderer(texture);
     }
 
     private Image createFontTexture(Font font, boolean antiAlias) {
@@ -192,7 +192,7 @@ public class BitmapFont {
             float u2 = u1 + g.width * normalizedWidth;
             float v2 = v1 + g.height * normalizedHeight;
 
-            renderer.queueRender(texture, drawX, drawY, g.width, g.height, u1, v1, u2, v2);
+            renderer.queueRender(drawX, drawY, g.width, g.height, u1, v1, u2, v2);
 
             drawX += g.width;
         }
