@@ -28,7 +28,7 @@ public class MapReader {
 			int width = Type.parseInt(reader.getRootElement().getAttributeValue("width"));
 			int height = Type.parseInt(reader.getRootElement().getAttributeValue("height"));
 			int layerAmount = reader.getRootElement().getChildren().size();
-			map = new Map(width, height, layerAmount, tileset.getRawTextureImage().getTextureId());
+			map = new Map(width, height);
 			
 			List<Element> rootChildren = reader.getRootElement().getChildren();
 			

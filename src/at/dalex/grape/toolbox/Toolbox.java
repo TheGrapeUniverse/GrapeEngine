@@ -1,8 +1,6 @@
 package at.dalex.grape.toolbox;
 
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Toolbox {
@@ -31,14 +29,6 @@ public class Toolbox {
 		matrix.rotate((float) Math.toRadians(ry), new Vector3f(0, 1, 0));
 		matrix.rotate((float) Math.toRadians(rz), new Vector3f(0, 0, 1));
 		return matrix;
-	}
-
-	private static Matrix3f createUVTransformationMatrix(Vector2f translation, Vector2f scale, float rx, float ry) {
-		Matrix3f matrix = new Matrix3f();
-		matrix.identity();
-		matrix.transform()
-		matrix.scale(translation.x, translation.y, 1.0f);
-
 	}
 
 	public static float[] convertMatrixToArray(Matrix4f matrix) {

@@ -17,7 +17,7 @@ public class MapGenerator {
 	public static Map generateFromPerlinNoise(int width, int height, int seed) {
 		perlinNoiseGenerator = new PerlinNoise(seed);
 		Tileset tileset = new Tileset(ImageUtils.loadBufferedImage("textures/base.png"), 16);
-		Map map = new Map(width, height, 1, tileset.getRawTextureImage().getTextureId());
+		Map map = new Map(width, height);
 		MapLayer layer = new MapLayer(width, height, tileset);
 		
 		float[][] values = perlinNoiseGenerator.generatePerlinNoise(width, height, 6);

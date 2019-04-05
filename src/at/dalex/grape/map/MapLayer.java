@@ -17,7 +17,6 @@ public class MapLayer {
 	private int width;
 	private int height;
 	private Tileset tileset;
-	private TextureAtlas atlas;
 
 	public MapLayer(int width, int height, Tileset tileset) {
 		this.width = width;
@@ -28,7 +27,6 @@ public class MapLayer {
 		int atlasWidth = atlasImage.getWidth();
 		int atlasHeight = atlasImage.getHeight();
 		int tileSize = tileset.getTileSize();
-		this.atlas = new TextureAtlas(atlasImage.getTextureId(), atlasWidth, atlasHeight, atlasWidth / tileSize, atlasHeight / tileSize);
 
 		//Fill layer with empty tiles
 		for (int y = 0; y < height; y++) {
@@ -40,7 +38,7 @@ public class MapLayer {
 		}
 	}
 
-	public void draw(BatchRenderer renderer, int dx, int dy, float scale, Matrix4f projectionAndViewMatrix) {
+	public void draw(BatchRenderer renderer, int dx, int dy, float scale) {
 		int windowWidth = DisplayManager.windowWidth;
 		int windowHeight = DisplayManager.windowHeight;
 		int tileSize = tileset.getTileSize();
@@ -53,16 +51,8 @@ public class MapLayer {
 				//To increase performance, only render what is visible
 				if (xPos < windowWidth && yPos < windowHeight && xPos > -tileSize * scale && yPos > -tileSize * scale) {
 					int tileId = tiles.get(y).get(x).getId();
-					float[] rectangleUVs = new float[] { 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0 };
 					if (tileId > -1) {
-
-						rectangleUVs = atlas.recalculateUVCoordinates(rectangleUVs, tileId);
-						System.out.println();
-
-						renderer.queueRender(
-								xPos, yPos,
-								(int) (tileSize * scale), (int) (tileSize * scale),
-								rectangleUVs);
+						renderer.queueRender(xPos, yPos, (int) (tileSize * scale), (int) (tileSize * scale), tileId);
 					}
 				}
 			}

@@ -33,7 +33,7 @@ public class TextureAtlas extends Image {
         int yOffset = cellId / numberOfRows;
         int xOffset = cellId - (yOffset * numberOfRows);
 
-        float normalizedCellWidth = 1.0f / numberOfColumns;
+        float normalizedCellWidth  = 1.0f / numberOfColumns;
         float normalizedCellHeight = 1.0f / numberOfRows;
 
         //Normalize all UVs
@@ -61,6 +61,10 @@ public class TextureAtlas extends Image {
 
     public int getNumberOfRows() {
         return this.numberOfRows;
+    }
+
+    public int getNumberOfColumns() {
+        return this.numberOfColumns;
     }
 
     public int[] getCellSize() {

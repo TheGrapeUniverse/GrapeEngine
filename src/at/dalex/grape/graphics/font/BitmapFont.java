@@ -1,6 +1,5 @@
 package at.dalex.grape.graphics.font;
 
-import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;

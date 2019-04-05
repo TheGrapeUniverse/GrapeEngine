@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.dalex.grape.graphics.BatchRenderer;
+import at.dalex.grape.graphics.graphicsutil.Image;
 import org.joml.Matrix4f;
 
 public class Map {
@@ -17,47 +18,38 @@ public class Map {
 	
 	private float scale_factor = 1f;
 
-	private BatchRenderer tileRenderer;
-	
-	public Map(int width, int height, int layerAmount, int textureAtlasId) {
+	public Map(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.tileRenderer = new BatchRenderer(textureAtlasId);
 	}
-	
-	public int getWidth() {
-		return this.width;
-	}
-	
-	public int getHeight() {
-		return this.height;
-	}
-	
-	public void addLayer(MapLayer layer) {
-		layers.add(layer);
-	}
-	
-	public MapLayer getLayer(int zIndex) {
-		return layers.get(zIndex);
-	}
-	
-	public void scale(float scaleFactor) {
-		scale_factor += scaleFactor;
-	}
-	
-	public void setScale(float scale) {
-		scale_factor = scale;
-	}
-	
-	public float getScale() {
-		return this.scale_factor;
-	}
-	
+
+	public void update() { }
+
 	public void setPosition(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-	
+
+	public MapLayer getLayer(int zIndex) {
+		return layers.get(zIndex);
+	}
+
+	public void addLayer(MapLayer layer) {
+		layers.add(layer);
+	}
+
+	public int getWidth() {
+		return this.width;
+	}
+
+	public int getHeight() {
+		return this.height;
+	}
+
+	public int getLayerCount() {
+		return this.layers.size();
+	}
+
 	public int getX() {
 		return this.x;
 	}
@@ -65,16 +57,16 @@ public class Map {
 	public int getY() {
 		return this.y;
 	}
-	
-	public void update() {
-		
+
+	public void scale(float scaleFactor) {
+		scale_factor += scaleFactor;
 	}
-	
-	public void draw(Matrix4f projectionAndViewMatrix) {
-		for (MapLayer layer : layers) {
-			layer.draw(tileRenderer, x, y, scale_factor, projectionAndViewMatrix);
-			tileRenderer.drawQueue(projectionAndViewMatrix);
-			tileRenderer.flush();
-		}
+
+	public void setScale(float scale) {
+		scale_factor = scale;
+	}
+
+	public float getScale() {
+		return this.scale_factor;
 	}
 }

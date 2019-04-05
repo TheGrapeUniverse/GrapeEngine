@@ -4,16 +4,12 @@ import at.dalex.grape.resource.FileContentReader;
 
 public class BatchShader extends ShaderProgram {
 
-    protected int position_atlasSize;
-
     public BatchShader() {
         super(FileContentReader.readFile("/shaders/BatchShader.vsh"), FileContentReader.readFile("/shaders/BatchShader.fsh"));
     }
 
     @Override
-    public void getAllUniformLocations() {
-        position_atlasSize = getUniformLoader().getUniformLocation("atlasSize");
-    }
+    public void getAllUniformLocations() {}
 
     @Override
     public void bindAttributes() {
@@ -21,5 +17,6 @@ public class BatchShader extends ShaderProgram {
         super.bindAttribute(1, "viewMatrix");
         super.bindAttribute(5, "transformationMatrix");
         super.bindAttribute(9, "uvOffset");
+        super.bindAttribute(10, "uvScale");
     }
 }
