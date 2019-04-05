@@ -1,16 +1,15 @@
 package at.dalex.grape.graphics;
 
 import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.info.Logger;
 import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 
-import javax.tools.Tool;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class BatchRenderer {
     private int textureId;
     private int vaoId;
     private int vVBOId; //Vertex Vertex-Buffer-Object lmao xd
-    private int texVBOId;
 
     private int instanceVBOId;
     private int instanceDataPos = 0;
@@ -33,35 +31,48 @@ public class BatchRenderer {
     //Maximum amount of instances to be drawn at once
     private final int MAX_INSTANCES = 100000;
 
-    // 4 for viewMat, 4 for transformMat, 4 for UVs
+    // 4 for viewMat, 4 for transformMat, 2 for UV-Offset
     // (Matrices = 4 float per row and column)
-    // [4*4 + 4*4 = 32]
-    private final int INSTANCE_DATA_LENGTH = 32;
+    // [4*4 + 4*4 + 2*4= 32]
+    private final int INSTANCE_DATA_LENGTH = 40;
 
     private FloatBuffer projectionMatrixBuffer;
     private FloatBuffer vertexBuffer;
-    private FloatBuffer uvBuffer;
     private FloatBuffer instanceBuffer;
 
+    private TextureAtlas textureAtlas;
+
     public BatchRenderer(Image atlasImage) {
-        this(atlasImage.getTextureId());
+        this(atlasImage, 1, 1);
     }
 
-    public BatchRenderer(int atlasTextureId) {
-        this.textureId = atlasTextureId;
+    /**
+     * Creates a new {@link BatchRenderer}, which is able to draw
+     * textured rectangles at incredible amounts in a short period of time.
+     *
+     * This renderer uses a technique called caching,
+     * which stores all draw informations until everything should be rendered.
+     * This system makes use of instancing!
+     *
+     * Internally, this system uses a texture atlas to avoid switching textures.
+     *
+     * @param atlasImage The source image of the texture atlas
+     * @param atlasRows The height in cells of the texture atlas
+     * @param atlasCols The width in cells of the texture atlas.
+     */
+    public BatchRenderer(Image atlasImage, int atlasRows, int atlasCols) {
+        this.textureAtlas = new TextureAtlas(atlasImage.getTextureId(), atlasImage.getWidth(), atlasImage.getHeight(),
+                atlasRows, atlasCols);
 
         vaoId = GL30.glGenVertexArrays();
         MemoryManager.createdVAOs.add(vaoId);
 
         vVBOId = GL15.glGenBuffers();
-        texVBOId = GL15.glGenBuffers();
         MemoryManager.createdVBOs.add(vVBOId);
-        MemoryManager.createdVBOs.add(texVBOId);
 
         /* Create FloatBuffers */
         projectionMatrixBuffer = createFloatBuffer(16);
         vertexBuffer = createFloatBuffer(24);
-        uvBuffer = createFloatBuffer(6 * 2); //2 UVs for each vertex = 12 floats
         instanceBuffer = createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 
         //Create VBO used for instanced rendering
@@ -70,7 +81,14 @@ public class BatchRenderer {
         //Calculate Vertex-Data
         //If you want to change these, rather use a transformation matrix
         //for each instance in the vertex shader. Thank you.
-        float[] vertices = { 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0 };
+        float[] vertices = {
+                0, 0,     /* UVs */   0, 0,
+                0, 1,                 0, 1,
+                1, 1,                 1, 1,
+                0, 0,                 0, 0,
+                1, 1,                 1, 1,
+                1, 0,                 1, 0
+        };
         vertexBuffer.put(vertices);
         vertexBuffer.flip();
 
@@ -82,12 +100,6 @@ public class BatchRenderer {
         GL20.glEnableVertexAttribArray(0);
         GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 0, 0); //2 coords for each vertex * sizeof(float) = 8
         GL20.glDisableVertexAttribArray(0);
-        /* Fill UV-Buffer */
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, texVBOId);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, uvBuffer, GL15.GL_DYNAMIC_DRAW);
-        GL20.glEnableVertexAttribArray(9); //We're using attribute 9, all from 1-8 are already used by instancing
-        GL20.glVertexAttribPointer(9, 2, GL11.GL_FLOAT, false, 0, 0); //2 floats for each vertex = 8 bytes (UV)
-        GL20.glDisableVertexAttribArray(9);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
         //View matrix
@@ -100,7 +112,8 @@ public class BatchRenderer {
         addInstancedAttribute(vaoId, instanceVBOId, 6, 4, INSTANCE_DATA_LENGTH, 20);
         addInstancedAttribute(vaoId, instanceVBOId, 7, 4, INSTANCE_DATA_LENGTH, 24);
         addInstancedAttribute(vaoId, instanceVBOId, 8, 4, INSTANCE_DATA_LENGTH, 28);
-
+        //UV-Offset
+        addInstancedAttribute(vaoId, instanceVBOId, 9, 2, INSTANCE_DATA_LENGTH, 32);
         GL30.glBindVertexArray(0);
     }
 
@@ -136,7 +149,7 @@ public class BatchRenderer {
         GL30.glBindVertexArray(vao);
         //Multiplied by 4 (4 bytes for each float)
         GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT, false, instancedDataLength * 4, offset * 4);
-        GL33.glVertexAttribDivisor(attribute, 1); //Mark VBO to be updated every single instance
+        GL33.glVertexAttribDivisor(attribute, 1); //Mark VBO to be updated every single instance step
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
         GL30.glBindVertexArray(0);
     }
@@ -170,12 +183,10 @@ public class BatchRenderer {
             BatchInfo currentBatch = batchQueue.get(i);
             storeMatrixInFloat(projection, instanceVBOData);
             storeMatrixInFloat(currentBatch.transformationMatrix, instanceVBOData);
-            /* Update UVs */
-            System.arraycopy(currentBatch.uvs, 0, uvs, (i * 12), 12);
-
+            instanceVBOData[instanceDataPos++] = textureAtlas.calculateXOffset();
+            instanceVBOData[instanceDataPos++] = textureAtlas.calculateYOffset();
         }
         updateInstanceVBO(instanceVBOId, instanceVBOData, instanceBuffer);  //Update Instance VBO
-        updateVBO(texVBOId, uvs, BufferUtils.createFloatBuffer(uvs.length), GL15.GL_DYNAMIC_DRAW); //Update UV-VBO
 
         //Draw vertices
         GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 6, batchQueue.size());

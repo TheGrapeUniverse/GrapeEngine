@@ -8,7 +8,6 @@ import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
-import at.dalex.grape.map.MapGenerator;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
