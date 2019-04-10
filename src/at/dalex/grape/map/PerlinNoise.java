@@ -103,11 +103,7 @@ public class PerlinNoise {
 	}
 	
 	public float[][] GetEmptyArray(int width, int height) {
-		float[][] array = new float[width][];
-		for (int i = 0; i < width; i++) {
-			array[i] = new float[height];
-		}
-		return array;
+		return new float[width][height];
 	}
 	
 	public float interpolate(float x0, float x1, float alpha) {
