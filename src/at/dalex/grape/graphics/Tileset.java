@@ -21,6 +21,8 @@ public class Tileset {
     private Image[][] tileArray;
     private ArrayList<Image> tileList;
     private int tileSize;
+    private int rows;
+    private int cols;
 
     public Tileset(BufferedImage rawImage, int tileSize) {
         this.tileSize = tileSize;
@@ -34,6 +36,8 @@ public class Tileset {
 
             int width = rawImage.getWidth() / tileSize;
             int height = rawImage.getHeight() / tileSize;
+            this.rows = height;
+            this.cols = width;
             ret = new Image[height][width];
             for(int i = 0; i < height; i++) {
                 for(int j = 0; j < width; j++) {
@@ -83,6 +87,14 @@ public class Tileset {
 
     public Image[][] getTileTextureArray() {
         return this.tileArray;
+    }
+
+    public int getNumberOfRows() {
+        return this.rows;
+    }
+
+    public int getNumberOfColumns() {
+        return this.cols;
     }
 }
 

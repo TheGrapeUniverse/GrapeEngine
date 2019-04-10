@@ -8,10 +8,12 @@ public class Chunk {
     private int chunkY;
     private Tile[][] blocks;
 
+    public static final int CHUNK_SIZE = 16;
+
     public Chunk(int chunkX, int chunkY) {
         this.chunkX = chunkX;
         this.chunkY = chunkY;
-        this.blocks = new Tile[16][16];
+        this.blocks = new Tile[CHUNK_SIZE][CHUNK_SIZE];
     }
 
     public Tile getTileAt(int x, int y) {

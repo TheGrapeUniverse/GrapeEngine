@@ -4,14 +4,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import at.dalex.grape.graphics.BatchRenderer;
+import at.dalex.grape.graphics.ChunkWorldRenderer;
 import at.dalex.grape.graphics.TilemapRenderer;
 import at.dalex.grape.graphics.Tileset;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import at.dalex.grape.map.MapGenerator;
+import at.dalex.grape.map.chunk.ChunkWorld;
 import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
@@ -24,26 +27,36 @@ public class PlayState extends GameState {
 	
 	private LuaManager luaManager;
 	public static Map current_map;
-	private TilemapRenderer tilemapRenderer;
 	public static ArrayList<Entity> entities = new ArrayList<>();
+
+	private ChunkWorld world;
+	private ChunkWorldRenderer chunkWorldRenderer;
 
 	@Override
 	public void init() {
 		luaManager = GrapeEngine.getEngine().getLuaManager();
 		luaManager.executeMain();
 		luaManager.callInit();
-		current_map = MapGenerator.generateFromPerlinNoise(128, 128, 2);
+		current_map = MapGenerator.generateFromPerlinNoise(16, 16, new Random().nextInt());
 		current_map.setScale(0.5f);
-		BufferedImage atlas = ImageUtils.loadBufferedImage("textures/base.png");
-		this.tilemapRenderer = new TilemapRenderer(current_map, new Tileset(atlas, 16));
-		this.tilemapRenderer.preCacheRender();
+
+		this.world = new ChunkWorld(1);
+		BufferedImage atlas = ImageUtils.loadBufferedImage("textures/debug.png");
+
+		world.generateChunkAt(0, 0);
+		world.generateChunkAt(0, 1);
+		world.generateChunkAt(1, 0);
+
+		chunkWorldRenderer = new ChunkWorldRenderer(new Tileset(atlas, 16), world);
 	}
 
 	@Override
 	public void draw(Matrix4f projectionAndViewMatrix) {
 		Graphics.enableBlending(true);
-		if (tilemapRenderer != null)
-			tilemapRenderer.draw(projectionAndViewMatrix);
+
+		chunkWorldRenderer.drawChunkAt(0, 0, projectionAndViewMatrix);
+		chunkWorldRenderer.drawChunkAt(0, 1, projectionAndViewMatrix);
+		chunkWorldRenderer.drawChunkAt(1, 0, projectionAndViewMatrix);
 
 		luaManager.callDraw();
 

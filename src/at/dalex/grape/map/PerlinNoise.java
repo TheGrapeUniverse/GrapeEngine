@@ -10,7 +10,7 @@ public class PerlinNoise {
 		this.seed = seed;
 	}
 	
-	public float[][] generateWhiteNoise(int width, int height) {
+	public float[][] generateWhiteNoise(int xOffset, int yOffset, int width, int height) {
 		Random random = new Random(seed);
 		float[][] noise = GetEmptyArray(width, height);
 		
@@ -97,8 +97,8 @@ public class PerlinNoise {
 		return perlinNoise;
 	}
 	
-	public float[][] generatePerlinNoise(int width, int height, int octaveCount) {
-		float[][] baseNoise = generateWhiteNoise(width, height);
+	public float[][] generatePerlinNoise(int xOffset, int yOffset, int width, int height, int octaveCount) {
+		float[][] baseNoise = generateWhiteNoise(xOffset, yOffset, width, height);
 		return generatePerlinNoise(baseNoise, octaveCount);
 	}
 	
