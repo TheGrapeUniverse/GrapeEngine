@@ -1,6 +1,5 @@
 package at.dalex.grape.map.chunk;
 
-import at.dalex.grape.map.PerlinNoise;
 import at.dalex.grape.map.Tile;
 import org.joml.Vector2i;
 
@@ -10,7 +9,7 @@ import java.util.Random;
 public class ChunkWorld implements IChunkProvider {
 
     private final int SEED;
-    private PerlinNoise perlinNoiseGenerator;
+    private OpenSimplexNoise simplexNoise;
     private HashMap<Vector2i, Chunk> generatedChunks;
 
     public ChunkWorld() {
@@ -19,7 +18,7 @@ public class ChunkWorld implements IChunkProvider {
 
     public ChunkWorld(int seed) {
         this.SEED = seed;
-        this.perlinNoiseGenerator = new PerlinNoise(this.SEED);
+        this.simplexNoise = new OpenSimplexNoise(SEED);
         this.generatedChunks = new HashMap<>();
     }
 
@@ -44,8 +43,8 @@ public class ChunkWorld implements IChunkProvider {
     @Override
     public void generateChunkAt(int x, int y) {
         if (!isChunkGenerated(x, y)) {
+            System.out.println("GENERATE");
             Chunk chunk = new Chunk(x, y);
-            float[][] values = perlinNoiseGenerator.generatePerlinNoise(Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE, 6);
             for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
                 for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
                     int WATER = 0;
@@ -53,10 +52,13 @@ public class ChunkWorld implements IChunkProvider {
                     int STONE = 2;
                     int SNOW = 3;
                     int SAND = 4;
-                    float value = values[i][j];
-                    int tileId = -1;
-                    if (value <= 0.45) tileId = WATER;
-                    else if (value > 0.45 && value <= 0.47) tileId = SAND;
+                    double value = simplexNoise.eval(
+                            (i + chunk.getChunkX() * Chunk.CHUNK_SIZE) / 13f,
+                            (j + chunk.getChunkY() * Chunk.CHUNK_SIZE) / 13f);
+                    value = (value + 1) / 2f;
+                    int tileId;
+                    if (value <= 0.30) tileId = WATER;
+                    else if (value > 0.30 && value <= 0.47) tileId = SAND;
                     else if (value > 0.47 && value <= 0.7) tileId = GRASS;
                     else if  (value > 0.7 && value < 0.9) tileId = STONE;
                     else tileId = SNOW;
@@ -64,7 +66,7 @@ public class ChunkWorld implements IChunkProvider {
                 }
             }
             this.generatedChunks.put(new Vector2i(x, y), chunk);
-        }
+        } else System.out.println("ALREADY GENEREATED");
     }
 
     @Override

@@ -20,7 +20,7 @@ public class MapGenerator {
 		Map map = new Map(width, height);
 		MapLayer layer = new MapLayer(width, height, tileset);
 		
-		float[][] values = perlinNoiseGenerator.generatePerlinNoise(width, height, 6);
+		float[][] values = perlinNoiseGenerator.generatePerlinNoise(0, 0, width, height, 6);
 		
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
