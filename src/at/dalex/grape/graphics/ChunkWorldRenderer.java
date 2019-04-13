@@ -24,7 +24,7 @@ public class ChunkWorldRenderer {
         if (chunk != null) {
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
                 for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
-                    int size = tileset.getTileSize() / 8;
+                    int size = tileset.getTileSize();
                     chunkRenderer.queueRender(
                             (xPos * Chunk.CHUNK_SIZE * size) + x * size,
                             (yPos * Chunk.CHUNK_SIZE * size) + y * size,

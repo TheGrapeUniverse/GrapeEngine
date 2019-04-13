@@ -49,7 +49,6 @@ public class PlayState extends GameState {
 		renderer = new TilemapRenderer(current_map, new Tileset(atlas, 16));
 		renderer.preCacheRender();
 
-
 		world.generateChunkAt(0, 0);
 
 		chunkWorldRenderer = new ChunkWorldRenderer(new Tileset(atlas, 16), world);
@@ -63,14 +62,17 @@ public class PlayState extends GameState {
 
 		Entity p = entities.get(0);
 		if (p != null) {
-			chunkWorldRenderer.cacheChunksInRange((int) (p.getX() / (16 / 8)) / 16, (int) (p.getY() / (16 / 8)) / 16);
+			chunkWorldRenderer.cacheChunksInRange((int) (p.getX() / 16) / 16, (int) (p.getY() / 16) / 16);
 		}
 
-		chunkWorldRenderer.drawChunkQueue(projectionAndViewMatrix);
+		chunkWorldRenderer.drawChunkQueue(GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
 
 		for (Entity entity : entities) {
-			entity.draw(projectionAndViewMatrix);
+			entity.draw(GrapeEngine.getEngine().getCamera().getProjectionMatrix());
 		}
+
+		if (p != null)
+			Graphics.fillRectangle((int) p.getX(), (int) p.getY(), 32, 32, Color.RED, GrapeEngine.getEngine().getCamera().getProjectionMatrix());
 
 		Graphics.enableBlending(false);
 	}
@@ -79,6 +81,12 @@ public class PlayState extends GameState {
 	public void update(double delta) {
 		if (current_map != null)
 			current_map.update();
+
+		Entity p = entities.get(0);
+		if (p != null) {
+			GrapeEngine.getEngine().getCamera().setPosition(new Vector3f((float) -p.getX(), (float) -p.getY(), 0.0f));
+			System.out.println("pX: " + p.getX());
+		}
 
 		luaManager.callUpdate();
 

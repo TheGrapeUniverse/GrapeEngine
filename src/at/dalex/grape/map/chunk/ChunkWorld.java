@@ -43,7 +43,6 @@ public class ChunkWorld implements IChunkProvider {
     @Override
     public void generateChunkAt(int x, int y) {
         if (!isChunkGenerated(x, y)) {
-            System.out.println("GENERATE");
             Chunk chunk = new Chunk(x, y);
             for (int i = 0; i < Chunk.CHUNK_SIZE; i++) {
                 for (int j = 0; j < Chunk.CHUNK_SIZE; j++) {
@@ -66,7 +65,7 @@ public class ChunkWorld implements IChunkProvider {
                 }
             }
             this.generatedChunks.put(new Vector2i(x, y), chunk);
-        } else System.out.println("ALREADY GENEREATED");
+        }
     }
 
     @Override
