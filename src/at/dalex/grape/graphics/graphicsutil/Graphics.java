@@ -13,16 +13,18 @@ import at.dalex.grape.graphics.shader.SolidColorShader;
 import at.dalex.grape.toolbox.ModelUtil;
 import at.dalex.grape.toolbox.Toolbox;
 
+/**
+ * This class represents a graphics utility for drawing
+ * forms, images and lines with only one method call.
+ *
+ * //TODO: Add line shader
+ */
 public class Graphics {
 
-	static {
-		modelUtil = new ModelUtil();
-	}
-	
-	private static ModelUtil 		modelUtil;
 	private static SolidColorShader solidColorShader;
 	private static ImageShader 		imageShader;
 
+	/* Some vertices as well as indices for the basic shapes */
 	private static float[] rectangleUvs = new float[] {
 			0, 0,
 			0, 1,
@@ -40,10 +42,16 @@ public class Graphics {
 	private static int[] rectangleBaseIndices = new int[] {
 		0, 1, 2, 0, 2, 3
 	};
-	
+
+	/* The rectangle model which is used for all rectangle drawing calls */
 	private static Model defaultRectangleModel;
 
-	public Graphics() {
+	/**
+	 * Initializes the graphics utility.
+	 * This means loading and compiling shaders as well as
+	 * creating the default models.
+	 */
+	public static void init() {
 		solidColorShader = new SolidColorShader();
 		imageShader = new ImageShader();
 		defaultRectangleModel = new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
@@ -116,11 +124,5 @@ public class Graphics {
 		Matrix4f transformedMatrix = new Matrix4f(projectionAndViewMatrix);				// Create a clone of the projectionAndViewMatrix because we don't want to overwrite the instance
 		return transformedMatrix.mul(transformationMatrix);								// Multiply the projectionAndViewMatrix with the transformationMatrix;
 	}	
-	
-	/**
-	 * Get the {@link ModelUtil} instance, which is used to store data in VBOs or in attribute lists.
-	 */
-	public static ModelUtil getLoader() {
-		return modelUtil;
-	}
+
 }

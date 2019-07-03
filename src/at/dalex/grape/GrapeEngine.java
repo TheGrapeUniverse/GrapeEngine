@@ -54,7 +54,7 @@ public abstract class GrapeEngine implements DisplayCallback {
 		displayManager.createDisplay();
 
 		//Create Managers
-		new Graphics();
+		Graphics.init();
 		new DefaultResources();
 		//resourceMonitor = new ResourceMonitor();
 		gameStateManager = new GameStateManager();
