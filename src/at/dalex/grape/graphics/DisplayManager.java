@@ -25,6 +25,15 @@ import at.dalex.grape.input.MouseListener;
 import at.dalex.grape.input.Scroll;
 
 
+/**
+ * This class is used to manage the display (or the window).
+ *
+ * For productivity reasons, the width and height of the window
+ * can be easily accessed using the following static fields:
+ *  - {@link DisplayManager#windowWidth}
+ *  - {@link DisplayManager#windowHeight}
+ *
+ */
 public class DisplayManager {
 
 	/* Static fields, so we can easily access the dimensions of the display later */
@@ -44,6 +53,18 @@ public class DisplayManager {
 
 	private DisplayCallback handler;
 
+	/**
+	 * Creates a new {@link DisplayManager} and parses the preferred
+	 * width and height of the window as well as fullscreen mode
+	 * from the GameInfo.txt file.
+	 *
+	 * Furthermore, the Main Game Loop is also present here.
+	 * To interact with this loop, a {@link DisplayCallback}
+	 * needs to be specified.
+	 *
+	 * @param title	The title of the window
+	 * @param windowHandler A callback to interact with the Main Game Loop
+	 */
 	public DisplayManager(String title, DisplayCallback windowHandler) {
 		this.windowTitle = title;
 		this.handler = windowHandler;
@@ -64,10 +85,15 @@ public class DisplayManager {
 
 		//Change VSync if set in GameInfo.txt
 		useVerticalSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync"));
-
-		timer = new Timer();
+		timer = new Timer(); //Create timer
 	}
 
+	/**
+	 * Creates a new window and sets the default keyboard and mouse callbacks.
+	 *
+	 * @throws IllegalStateException When GLFW could not be initialized.
+	 * @throws RuntimeException When the window could not be created.
+	 */
 	public void createDisplay() {
 		GLFWErrorCallback.createPrint(System.err).set();
 
@@ -124,7 +150,7 @@ public class DisplayManager {
 			);
 		}
 
-		// Enable v-sync
+		// Set v-sync
 		if (useVerticalSync)
 			glfwSwapInterval(1);
 		else glfwSwapInterval(0);
@@ -136,6 +162,11 @@ public class DisplayManager {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
+	/**
+	 * Starts the Main Game Loop.
+	 * If not called before the {@link DisplayManager#destroy()}
+	 * method, the window will close.
+	 * */
 	public void loop() {
 		while (!glfwWindowShouldClose(windowHandle)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
@@ -155,7 +186,7 @@ public class DisplayManager {
 	}
 
 	/**
-	 * Destroys the window and frees callbacks
+	 * Destroys the window and frees the default callbacks
 	 */
 	public void destroy() {
 		//Free window callbacks and destroy the window
@@ -166,10 +197,23 @@ public class DisplayManager {
 		glfwSetErrorCallback(null).free();
 	}
 
+	/**
+	 * Enables V-Sync
+	 * <b>PLEASE NOTE:</b>
+	 * This method needs to be called before the {@link DisplayManager#createDisplay()}
+	 * method, otherwise it will not change! (Might be fixed in the future)
+	 * @param useVerticalSync Use V-Sync?
+	 */
 	public void enableVsync(boolean useVerticalSync) {
 		this.useVerticalSync = useVerticalSync;
 	}
 
+	/**
+	 * Returns the {@link Timer} of this Display.
+	 * The Timer is used for well.. (you guessed it) timing stuff.
+	 *
+	 * @return The {@link Timer} of this window
+	 */
 	public Timer getTimer() {
 		return this.timer;
 	}
