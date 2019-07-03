@@ -5,23 +5,30 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.swing.JOptionPane;
-
 import org.json.simple.JSONObject;
-
 import at.dalex.grape.script.JSONReader;
 import at.dalex.grape.toolbox.FileUtil;
 
+/**
+ * This class holds essential information about the game,
+ * including resource locations and other options.
+ *
+ * Those informations are meant to be read before
+ * game launch.
+ */
 public class GameInfo {
 
 	private HashMap<String, String> options = new HashMap<>();
 	private JSONReader reader;
 
 	public static String engine_location;
-
 	private final File DEFAULT_SEARCH_PATH;
 
+	/**
+	 * Parses the GameInfo file at the given location.
+	 * @param gameLocation <b>Parent</b> folder of the GameInfo.txt (game location)
+	 */
 	public GameInfo(String gameLocation) {
 		if (gameLocation == ".") {
 			try {
@@ -46,11 +53,15 @@ public class GameInfo {
 			}
 		}
 		else {
-			JOptionPane.showConfirmDialog(null, "Unable to locate GameInfo.txt", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showConfirmDialog(null, "Unable to locate GameInfo.txt", "Error",
+					JOptionPane.DEFAULT_OPTION,JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 	}
 
+	/**
+	 * Parses every element in the GameInfo.txt file and stores it for later use.
+	 */
 	private void parseConfig() {
 		JSONObject info = (JSONObject) reader.getRootElement().get("GameInfo");
 		for (Object value : info.keySet()) {
@@ -58,6 +69,10 @@ public class GameInfo {
 		}
 	}
 
+	/**
+	 * Get a value present in the GameInfo.txt file.
+	 * @param key The key under which the value can be accessed.
+	 */
 	public String getValue(String key) {
 		String value = null;
 		if (options.containsKey(key)) {
