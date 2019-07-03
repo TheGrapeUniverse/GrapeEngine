@@ -10,6 +10,8 @@ import at.dalex.grape.toolbox.MemoryManager;
 
 import javax.swing.JLabel;
 
+@Deprecated //Will be removed in the next update
+			//Thus no further documentation needed.
 public class ResourceMonitor extends JFrame {
 
 	private static final long serialVersionUID = 1L;
