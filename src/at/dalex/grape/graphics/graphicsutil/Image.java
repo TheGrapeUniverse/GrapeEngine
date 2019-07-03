@@ -2,6 +2,17 @@ package at.dalex.grape.graphics.graphicsutil;
 
 import org.lwjgl.opengl.GL11;
 
+/**
+ * This class is used by OpenGL to store image data.
+ * The class does not actually store any of the data,
+ * it just holds an id associated with the image in the GPU's memory.
+ *
+ * For increased productivity, this class also holds the dimensions
+ * of the original image.
+ *
+ * @author David Kraus
+ * @since 1.0
+ */
 public class Image {
 
 	private int textureId;
