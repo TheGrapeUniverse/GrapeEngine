@@ -14,6 +14,9 @@ import org.joml.Vector3f;
  * <b>PLEASE NOTE:</b>
  * Although we (might) only use a 2D perspective,
  * OpenGL handles everything as 3D, so we still need three-dimensional positions.
+ *
+ * @author David Kraus
+ * @since 1.0
  */
 //TODO: Update class to allow rotations
 public class Camera {

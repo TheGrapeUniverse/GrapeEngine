@@ -16,6 +16,9 @@ import at.dalex.grape.toolbox.FileUtil;
  *
  * Those informations are meant to be read before
  * game launch.
+ *
+ * @author David Kraus
+ * @since 1.2
  */
 public class GameInfo {
 

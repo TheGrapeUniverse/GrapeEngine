@@ -12,7 +12,8 @@ import at.dalex.grape.graphics.graphicsutil.ImageUtils;
  *
  * //TODO: Update rendering system to only use a single texture internally. (Not hundreds)
  *
- * @author dalex
+ * @since 1.0
+ * @author dalex (David Kraus)
  */
 public class Animation {
 
