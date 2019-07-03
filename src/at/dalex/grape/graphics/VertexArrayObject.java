@@ -11,12 +11,17 @@ import org.lwjgl.opengl.GL30;
 
 import at.dalex.grape.toolbox.MemoryManager;
 
+/**
+ * This class is used by OpenGL to store data.
+ */
 public class VertexArrayObject {
 
 	private int vaoID;
-	
+
+	/**
+	 * Creates a new {@link VertexArrayObject}.
+	 */
 	public VertexArrayObject() {
-		
 		vaoID = GL30.glGenVertexArrays();
 		MemoryManager.createdVAOs.add(vaoID);
 	}
@@ -48,7 +53,6 @@ public class VertexArrayObject {
 		MemoryManager.createdVBOs.add(vboID);
 
 		FloatBuffer buffer = storeDataInNewFloatBuffer(data);
-
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, dynamic ? GL15.GL_DYNAMIC_DRAW : GL15.GL_STATIC_DRAW);
 
 		//Store data
@@ -56,7 +60,6 @@ public class VertexArrayObject {
 		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, stride, 0);
 		GL20.glDisableVertexAttribArray(attributeNumber);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
 		unbindVAO();
 
 		return vboID;
